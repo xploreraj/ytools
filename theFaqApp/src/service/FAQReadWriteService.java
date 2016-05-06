@@ -1,9 +1,12 @@
 package service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +22,14 @@ import data.ModulesData;
 public class FAQReadWriteService {
 	
 	private static ObjectMapper mapper = JsonFactory.create();
-	private static final String FILE_NAME = "C:/Users/rbiswas/Dropbox/Public/Java_bin/eclipse_workspace/theFaqApp/data/info_db.json";
+	static FAQReadWriteService serv = new FAQReadWriteService();
+	private static final String FILE_NAME = "/theFaqApp/data/info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
 		/*
 		 * TO DO: file can be empty initially, this gives class cast exception
 		 */
-		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME), ModulesData.class);
+		ModulesData modulesData = mapper.readValue(FILE_NAME,  ModulesData.class);
 		return modulesData;
 	}
 	
