@@ -8,8 +8,8 @@
 <script type="text/javascript" src="js/jquery-1.8.3.js"></script>
 <script type="text/javascript">
 
-	function validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, info) {
-		if(!newModuleName || (!newSubModuleName ? info : !info)) {
+	function validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoConcatenated) {
+		if(!newModuleName || (!newSubModuleName ? infoConcatenated : !infoConcatenated)) {
 			//$('#submitMessageSpan').css('color','red').html('Inconsistent data, complete all the fields!');
 			return false;
 		}
@@ -73,11 +73,11 @@
 			if(moduleName == 'Select') {
 				$('#newModuleName').val('');
 				$('#newSubModuleName').val('');
-				$('#info').html('');
+				$('#preChecksInfo').html('');
 				$('#newModuleName').hide();
 				$('#subModule').hide();
 				$('#newSubModuleName').hide();
-				$('#info').hide();
+				$('#preChecksInfo').hide();
 				$('#submit').hide();
 				return;
 			}
@@ -85,7 +85,7 @@
 
 				$('#newModuleName').val('Enter module name').show();
 				$('#newSubModuleName').val('Enter submodule name').show();
-				$('#info').val('Enter module information here.\nSeparate lines using linebreaks.\n' +
+				$('#preChecksInfo').val('Enter pre checking steps here.\nSeparate lines using linebreaks.\n' +
 						'Do not use any tags, use only plaintext').show();
 				
 				$('#currentModuleName').val('');
@@ -129,12 +129,12 @@
 			
 			if(subModuleName == 'Select') {
 				$('#newSubModuleName').hide();
-				$('#info').hide();
+				$('#preChecksInfo').hide();
 				return;
 			}
 			if(subModuleName == 'Create' && moduleName != 'Select') {
 				$('#newSubModuleName').val('Enter submodule name').show();
-				$('#info').val('Enter module information here.\nSeparate lines using linebreaks.\nDo not use any tags, use only plaintext').show();
+				$('#preChecksInfo').val('Enter pre checks steps here.\nSeparate lines using linebreaks.\nDo not use any tags, use only plaintext').show();
 				$('#submit').show();
 				return;
 			}
@@ -154,8 +154,8 @@
 				url:'AjaxController',
 				success: function(response){
 					if (response != null) {
-						$('#info').val(response.info);
-						$('#info').show();
+						$('#preChecksInfo').val(response.preChecksInfo);
+						$('#preChecksInfo').show();
 					}
 					else {
 						errorHelper(true, 'No Data Found');
@@ -170,11 +170,14 @@
 			var newModuleName = $('#newModuleName').val().trim();
 			var currSubModuleName = $('#currentSubModuleName').val();
 			var newSubModuleName = $('#newSubModuleName').val().trim();
-			var info = $('#info').val().trim();
+			var preChecksInfo = $('#preChecksInfo').val().trim();
+			var functionalInfo = $('#functionalInfo').val().trim();
+			var technicalInfo = $('#technicalInfo').val().trim();;
+			var infoConcatenated =  preChecksInfo + functionalInfo + technicalInfo;
 
 			//TODO
 			//submit validations **************
-			if(!validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, info)) {
+			if(!validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoConcatenated)) {
 				errorHelper(true, 'Inconsistent data! New value(s) must be different from previous value(s), and not empty.');
 				return;
 			}
@@ -191,7 +194,7 @@
 					newModuleName : newModuleName,
 					currSubModuleName : currSubModuleName,
 					newSubModuleName : newSubModuleName,
-					info : info,
+					preChecksInfo : preChecksInfo,
 					action : 'submitForm'
 				},
 				dataType: 'text',
@@ -243,7 +246,19 @@
 		<tr>
 		<td></td>
 		<td>
-			<textarea style="display:none;" cols="100" rows="20" id="info" name="info"></textarea>
+			<textarea style="display:none;" cols="100" rows="20" id="preChecksInfo"></textarea>
+		</td>
+		</tr>
+		<tr>
+		<td></td>
+		<td>
+			<textarea style="display:none;" cols="100" rows="20" id="functionalInfo"></textarea>
+		</td>
+		</tr>
+		<tr>
+		<td></td>
+		<td>
+			<textarea style="display:none;" cols="100" rows="20" id="technicalInfo"></textarea>
 		</td>
 		</tr>
 		<tr>

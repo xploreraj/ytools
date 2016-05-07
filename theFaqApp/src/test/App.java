@@ -3,7 +3,6 @@ package test;
 import java.io.*;
 import java.util.*;
 
-import org.boon.Boon;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
 
@@ -23,11 +22,15 @@ public class App {
 		//transaction
 		SubModule split = new SubModule();
 		split.setName("Split");
-		split.setInfo("Hello world");
+		split.setPreChecksInfo("Hello world");
+		split.setFunctionalInfo("functional information");
+		split.setTechnicalInfo("some technical information");
 		
 		SubModule reconcile = new SubModule();
 		reconcile.setName("Reconcile");
-		reconcile.setInfo("Hi....");
+		reconcile.setPreChecksInfo("Hi....");
+		reconcile.setFunctionalInfo("functional information");
+		reconcile.setTechnicalInfo("some technical information");
 		
 		Module transaction = new Module();
 		transaction.setName("Transaction");
@@ -37,7 +40,9 @@ public class App {
 		//networth
 		SubModule datapoints = new SubModule();
 		datapoints.setName("Datapoints");
-		datapoints.setInfo("Hello world");
+		datapoints.setPreChecksInfo("Hello world");
+		datapoints.setFunctionalInfo("functional information");
+		datapoints.setTechnicalInfo("some technical information");
 		
 		Module networth = new Module();
 		networth.setName("Networth");
@@ -57,22 +62,21 @@ public class App {
 		//File file = File.createTempFile( "user", ".json" );
 		mapper.writeValue(new FileOutputStream("data/info_db.json"), modulesData);
 		
-		
 		//read data and modify
-		/*ObjectMapper mapper = JsonFactory.create();
-		ModulesData modulesData = mapper.readValue(new FileInputStream("data/info_db.json"), ModulesData.class);
+		ObjectMapper mapper1 = JsonFactory.create();
+		ModulesData modulesData1 = mapper1.readValue(new FileInputStream("data/info_db.json"), ModulesData.class);
 		//get module
-		Module module = modulesData.getModule("Transaction");
+		Module module = modulesData1.getModule("Transaction");
 		//rename
 		module.setName("Transactions");
 		//delete existing entry
-		modulesData.removeModule("Transaction");
+		modulesData1.removeModule("Transaction");
 		//add updated info
-		modulesData.addModule(module);
+		modulesData1.addModule(module);
 		
-		mapper.writeValue(new FileOutputStream("data/info_db.json"), modulesData);*/
+		mapper.writeValue(new FileOutputStream("data/info_db.json"), modulesData1);
 		
-		Set<String> moduleSet = modulesData.getModuleNames();
+		Set<String> moduleSet = modulesData1.getModuleNames();
 		System.out.println(moduleSet);
 		//for(Module mod: moduleSet)
 	}

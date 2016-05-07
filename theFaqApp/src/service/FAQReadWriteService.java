@@ -22,14 +22,13 @@ import data.ModulesData;
 public class FAQReadWriteService {
 	
 	private static ObjectMapper mapper = JsonFactory.create();
-	static FAQReadWriteService serv = new FAQReadWriteService();
-	private static final String FILE_NAME = "/theFaqApp/data/info_db.json";
+	private static final String FILE_NAME = "C:\\Users\\rbiswas\\Documents\\GitHub\\ytools\\theFaqApp\\data\\info_db.json"; //"\\theFaqApp\\data\\info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
 		/*
 		 * TO DO: file can be empty initially, this gives class cast exception
 		 */
-		ModulesData modulesData = mapper.readValue(FILE_NAME,  ModulesData.class);
+		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
 		return modulesData;
 	}
 	
@@ -113,7 +112,7 @@ public class FAQReadWriteService {
 			
 			subModule = new SubModule();
 			subModule.setName(newSubModuleName);
-			subModule.setInfo(info);
+			subModule.setPreChecksInfo(info);
 			
 			module.addSubModule(subModule);
 			modulesData.addModule(module);
@@ -134,7 +133,7 @@ public class FAQReadWriteService {
 					&& (currSubModuleName.isEmpty() || module.getSubModule(currSubModuleName)==null)) {
 				subModule = new SubModule();
 				subModule.setName(newSubModuleName);
-				subModule.setInfo(info);
+				subModule.setPreChecksInfo(info);
 				module.addSubModule(subModule);
 			}
 			else {
@@ -146,7 +145,7 @@ public class FAQReadWriteService {
 					module.addSubModule(subModule);
 				}
 				if(!info.isEmpty())
-					subModule.setInfo(info);
+					subModule.setPreChecksInfo(info);
 			}
 			mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
 		}

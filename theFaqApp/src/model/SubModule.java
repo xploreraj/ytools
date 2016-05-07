@@ -3,18 +3,18 @@ package model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.boon.json.annotations.JsonInclude;
+
 import service.CommonUtil;
 
 public class SubModule implements Serializable, Comparable<SubModule> {
 
 	private static final long serialVersionUID = 1L;
 	
-	private String name;
-	private String functionalInfo;
-	private String technicalInfo;
-	private String preChecks;
-	private String info; //has to be removed, since we have three specialized info data as above
-	private Date date;
+	private @JsonInclude String name;
+	private @JsonInclude String functionalInfo;
+	private @ JsonInclude String technicalInfo;
+	private @JsonInclude String preChecksInfo;
 	
 	public String getName() {
 		return name;
@@ -34,23 +34,11 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	public void setTechnicalInfo(String technicalInfo) {
 		this.technicalInfo = technicalInfo;
 	}
-	public String getPreChecks() {
-		return preChecks;
+	public String getPreChecksInfo() {
+		return preChecksInfo;
 	}
-	public void setPreChecks(String preChecks) {
-		this.preChecks = preChecks;
-	}
-	public String getInfo() {
-		return info;
-	}
-	public void setInfo(String info) {
-		this.info = info;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setPreChecksInfo(String preChecksInfo) {
+		this.preChecksInfo = preChecksInfo;
 	}
 	/*public ArrayList<String> getInfoList() {
 		return infoList;
