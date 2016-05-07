@@ -195,6 +195,8 @@
 					currSubModuleName : currSubModuleName,
 					newSubModuleName : newSubModuleName,
 					preChecksInfo : preChecksInfo,
+					functionalInfo : functionalInfo,
+					technicalInfo : technicalInfo,
 					action : 'submitForm'
 				},
 				dataType: 'text',
