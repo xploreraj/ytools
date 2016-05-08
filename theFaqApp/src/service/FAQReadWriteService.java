@@ -1,12 +1,8 @@
 package service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -93,7 +89,7 @@ public class FAQReadWriteService {
 		currModuleName 		= CommonUtil.getNameFormattedString(currModuleName);
 		currSubModuleName 	= CommonUtil.getNameFormattedString(currSubModuleName);
 		
-		String infoConcatenated = preChecksInfo.trim() + functionalInfo.trim() + technicalInfo.trim();
+		String infoConcatenated = preChecksInfo + functionalInfo + technicalInfo + "";
 		
 		
 		//check for inconsistent data
@@ -115,6 +111,10 @@ public class FAQReadWriteService {
 			module.setName(newModuleName);
 			
 			subModule = new SubModule();
+			subModule.setName(newSubModuleName);
+			subModule.setPreChecksInfo(preChecksInfo);
+			subModule.setFunctionalInfo(functionalInfo);
+			subModule.setTechnicalInfo(technicalInfo);
 			
 			module.addSubModule(subModule);
 			modulesData.addModule(module);
@@ -133,9 +133,13 @@ public class FAQReadWriteService {
 					&& (currSubModuleName.isEmpty() || module.getSubModule(currSubModuleName)==null)) {
 				subModule = new SubModule();
 				subModule.setName(newSubModuleName);
+				subModule.setPreChecksInfo(preChecksInfo);
+				subModule.setFunctionalInfo(functionalInfo);
+				subModule.setTechnicalInfo(technicalInfo);
 				module.addSubModule(subModule);
 			}
 			else {
+				//edit submodule
 				subModule = module.getSubModule(currSubModuleName);
 				//remove old name entry and insert new name entry
 				if (!currSubModuleName.equals(newSubModuleName)) {
@@ -143,13 +147,15 @@ public class FAQReadWriteService {
 					subModule.setName(newSubModuleName);
 					module.addSubModule(subModule);
 				}
+				
+				if(!infoConcatenated.isEmpty()) {
+					subModule.setPreChecksInfo(preChecksInfo);
+					subModule.setFunctionalInfo(functionalInfo);
+					subModule.setTechnicalInfo(technicalInfo);
+				}
 			}
 
 		}
-		
-		subModule.setPreChecksInfo(preChecksInfo);
-		subModule.setFunctionalInfo(functionalInfo);
-		subModule.setTechnicalInfo(technicalInfo);
 		
 		mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
 		

@@ -35,6 +35,8 @@
 			//info section
 			var module_submodule = $('#module_submodule');
 			var preChecksInfo = $('#preChecksInfo');
+			var functionalInfo = $('#functionalInfo');
+			var technicalInfo = $('#technicalInfo');
 
 			//on change, clear dropdown population and info
 			$('#subModule').find('option:gt(0)').remove();
@@ -42,6 +44,8 @@
 			module_submodule.html('');
 			//info.html('<h3>Please select module and corresponding sub-module from above dropdowns, or create new!</h3>');
 			preChecksInfo.html('');
+			functionalInfo.html('');
+			technicalInfo.html('');
 					
 			var moduleName = $('select#module').val();
 					
@@ -77,12 +81,16 @@
 			//info area
 			var module_submodule = $('#module_submodule');
 			var preChecksInfo = $('#preChecksInfo');
+			var functionalInfo = $('#functionalInfo');
+			var technicalInfo = $('#technicalInfo');
 
 			module_submodule.html('');
 			
 			if(moduleName == 'Select' || subModuleName == 'Select') {
 				//info.html('<h3>Please select module and corresponding sub-module from above dropdowns, or create new!</h3>');
 				preChecksInfo.html('');
+				technicalInfo.html('');
+				functionalInfo.html('');
 				return;
 			}
 				
@@ -111,7 +119,13 @@
 				      	
 						
 						module_submodule.append('<h3>' + moduleName + ': ' + response.name + '</h3>');
-				      	preChecksInfo.html(response.preChecksInfo.replace(/\n/g,"<br>"));
+				      	if(response.preChecksInfo)
+				      		preChecksInfo.html('<h4>PRE-CHECKS</h4>' + response.preChecksInfo.replace(/\n/g,"<br>"));
+				      	if(response.functionalInfo)
+					      	functionalInfo.html('<h4>FUNTIONAL INFO</h4>' + response.functionalInfo.replace(/\n/g,"<br>"));
+				      	if(response.technicalInfo)
+					      	technicalInfo.html('<h4>TECHNICAL INFO</h4>' + response.technicalInfo.replace(/\n/g,"<br>"));
+				      	
 			        	/* $.each(response.info, function(index, value) {
 			        		//'index' is being used to number lines of info from 'infoList' in JSON
 			        		info.append((index+1) + '. ' + value + '<br/>');
@@ -171,6 +185,9 @@ Step 2:
 	<br>
 	<div id="preChecksInfo"></div>
 	<br>
+	<div id="functionalInfo"></div>
+	<br>
+	<div id="technicalInfo"></div>
 </fieldset>
 
 </body>

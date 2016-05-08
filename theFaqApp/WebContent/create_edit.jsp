@@ -8,6 +8,37 @@
 <script type="text/javascript" src="js/jquery-1.8.3.js"></script>
 <script type="text/javascript">
 
+	function showInfoTextAreas(preChecks, funcInfo, techInfo) {
+		$('#preChecksInfo').val(preChecks).show();
+		$('#functionalInfo').val(funcInfo).show();
+		$('#technicalInfo').val(techInfo).show();
+		//$("tr:gt(2)").show();
+		$('#preChecksLegend').show();
+		$('#funcInfoLegend').show();
+		$('#techInfoLegend').show();
+	}
+
+	function hideInfoTextAreas() {
+		$('#preChecksInfo').val('').hide();
+		$('#functionalInfo').val('').hide();
+		$('#technicalInfo').val('').hide();
+		//$("tr:gt(2)").hide();
+		$('#preChecksLegend').hide();
+		$('#funcInfoLegend').hide();
+		$('#techInfoLegend').hide();
+	}
+
+	function showConfirmCheckbox(show) {
+		if(show) {
+			$('#confirmSubmitTD').show();
+			$('#confirmSubmit').prop('checked', false);
+		}
+		else {
+			$('#confirmSubmitTD').hide();
+			$('#confirmSubmit').prop('checked', false);
+		}
+	}
+
 	function validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoConcatenated) {
 		if(!newModuleName || (!newSubModuleName ? infoConcatenated : !infoConcatenated)) {
 			//$('#submitMessageSpan').css('color','red').html('Inconsistent data, complete all the fields!');
@@ -66,40 +97,40 @@
 			//on change, clear dropdown population and info
 			//$('#subModule').find('option:gt(0)').remove();
 			$('#subModule').find('option:gt(0):lt(-1)').remove();
-			
-					
+			$('#newSubModuleName').val('').hide();
+			hideInfoTextAreas();
+
 			var moduleName = $('select#module').val();
 					
 			if(moduleName == 'Select') {
-				$('#newModuleName').val('');
-				$('#newSubModuleName').val('');
-				$('#preChecksInfo').html('');
-				$('#newModuleName').hide();
+				$('#newModuleName').val('').hide();
 				$('#subModule').hide();
-				$('#newSubModuleName').hide();
-				$('#preChecksInfo').hide();
-				$('#submit').hide();
+				
+				showConfirmCheckbox(false);
 				return;
 			}
 			else if(moduleName == 'Create') {
 
 				$('#newModuleName').val('Enter module name').show();
 				$('#newSubModuleName').val('Enter submodule name').show();
-				$('#preChecksInfo').val('Enter pre checking steps here.\nSeparate lines using linebreaks.\n' +
-						'Do not use any tags, use only plaintext').show();
-				
 				$('#currentModuleName').val('');
 				$('#subModule').hide();
 				$('#currentSubModuleName').val('');
-				$('#submit').show();
+				
+				var preChecks = 'Enter pre checking steps here.\nSeparate lines using linebreaks.\n' +
+						'Do not use any tags, use only plaintext';
+				var funcInfo = 'Enter functional info here';
+				var techInfo = 'Enter technical info here';
+				showInfoTextAreas(preChecks, funcInfo, techInfo);
+				showConfirmCheckbox(true);
+				//$('#submit').show();
 				
 				return;
 			}
 
 			$('#currentModuleName').val(moduleName); //to store current module name or 'Create' for new module
-			$('#newModuleName').val(moduleName);
-			$('#newModuleName').show();
-			$('#submit').show();
+			$('#newModuleName').val(moduleName).show();
+			showConfirmCheckbox(true);
 			
 			$.ajax({
 				type:'POST',
@@ -129,13 +160,16 @@
 			
 			if(subModuleName == 'Select') {
 				$('#newSubModuleName').hide();
-				$('#preChecksInfo').hide();
+				hideInfoTextAreas();
 				return;
 			}
 			if(subModuleName == 'Create' && moduleName != 'Select') {
 				$('#newSubModuleName').val('Enter submodule name').show();
-				$('#preChecksInfo').val('Enter pre checks steps here.\nSeparate lines using linebreaks.\nDo not use any tags, use only plaintext').show();
-				$('#submit').show();
+				var preChecks = 'Enter pre checks steps here.\nSeparate lines using linebreaks.\nDo not use any tags, use only plaintext';
+				var funcInfo = 'Enter functional info here.';
+				var techInfo = 'Enter technical info here.';
+				showInfoTextAreas(preChecks, funcInfo, techInfo);
+				showConfirmCheckbox(true);
 				return;
 			}
 
@@ -154,8 +188,7 @@
 				url:'AjaxController',
 				success: function(response){
 					if (response != null) {
-						$('#preChecksInfo').val(response.preChecksInfo);
-						$('#preChecksInfo').show();
+						showInfoTextAreas(response.preChecksInfo, response.functionalInfo, response.technicalInfo);
 					}
 					else {
 						errorHelper(true, 'No Data Found');
@@ -163,6 +196,13 @@
 				}
 			});//3.
 
+		});
+
+		$('#confirmSubmit').change(function(){
+			if(this.checked)
+				$('#submit').show();
+			else
+				$('#submit').hide();
 		});
 
 		$('#submit').click(function(){
@@ -182,10 +222,10 @@
 				return;
 			}
 
-			var proceed = confirm('Submitting will create new information or update existing infomation depending upon your form selection.' +
-					' Do you want to submit the information?');
-			if(!proceed)
-				return;
+			//var proceed = confirm('Submitting will create new information or update existing infomation depending upon your form selection.' +
+					//' Do you want to submit the information?');
+			//if(!proceed)
+				//return;
 			
 			$.ajax({
 				type:'POST',
@@ -246,22 +286,26 @@
 			</td>
 		</tr>
 		<tr>
-		<td></td>
-		<td>
-			<textarea style="display:none;" cols="100" rows="20" id="preChecksInfo"></textarea>
-		</td>
+			<td id="preChecksLegend" style="display:none">Pre-checks</td>
+			<td>
+				<textarea style="display:none" cols="50" rows="10" id="preChecksInfo"></textarea>
+			</td>
 		</tr>
 		<tr>
-		<td></td>
-		<td>
-			<textarea style="display:none;" cols="100" rows="20" id="functionalInfo"></textarea>
-		</td>
+			<td id="funcInfoLegend" style="display:none">Functional Information</td>
+			<td>
+				<textarea style="display:none" cols="50" rows="10" id="functionalInfo"></textarea>
+			</td>
 		</tr>
 		<tr>
-		<td></td>
-		<td>
-			<textarea style="display:none;" cols="100" rows="20" id="technicalInfo"></textarea>
-		</td>
+			<td id="techInfoLegend" style="display:none">Technical Information</td>
+			<td>
+				<textarea style="display:none" cols="50" rows="10" id="technicalInfo"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td id="confirmSubmitTD" style="display: none"><input style="color: blue" type="checkbox" id="confirmSubmit" value="">Confirm changes. This will create new information or update existing infomation.</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -274,4 +318,10 @@
 	</table>
 	
 </body>
+
+<head>
+	<style>
+		td {vertical-align: top;}
+	</style>
+</head>
 </html>
