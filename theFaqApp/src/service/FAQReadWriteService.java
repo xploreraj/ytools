@@ -3,7 +3,6 @@ package service;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +18,13 @@ import data.ModulesData;
 public class FAQReadWriteService {
 	
 	private static ObjectMapper mapper = JsonFactory.create();
-	private static final String FILE_NAME = "C:/Users/rbiswas/Dropbox/Public/Java_bin/eclipse_workspace/theFaqApp/data/info_db.json";
+	private static final String FILE_NAME = "C:\\Users\\rbiswas\\Documents\\GitHub\\ytools\\theFaqApp\\data\\info_db.json"; //"\\theFaqApp\\data\\info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
 		/*
 		 * TO DO: file can be empty initially, this gives class cast exception
 		 */
-		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME), ModulesData.class);
+		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
 		return modulesData;
 	}
 	
@@ -45,7 +44,7 @@ public class FAQReadWriteService {
 	 * @param parentModule
 	 * @return Set of submodule names as JSON string
 	 */
-	public static String getSubModuleNamesAsJson(ModulesData modulesData, String moduleName) {
+	public static String getSubModuleNames(ModulesData modulesData, String moduleName) {
 		Set<String> subModuleNames = modulesData.getModule(moduleName).getSubModuleNames();
 		String json = mapper.toJson(subModuleNames);
 		return json;
@@ -77,9 +76,10 @@ public class FAQReadWriteService {
 	 * @throws FileNotFoundException
 	 * @throws InconsistentDataException 
 	 */
-	public static void saveModuleData(ModulesData modulesData, String currModuleName,
-			String newModuleName, String currSubModuleName,
-			String newSubModuleName, String info) throws FileNotFoundException, InconsistentDataException {
+	public static void saveModuleData(ModulesData modulesData, String currModuleName, String newModuleName, 
+			String currSubModuleName, String newSubModuleName, 
+			String preChecksInfo, String functionalInfo, String technicalInfo) 
+					throws FileNotFoundException, InconsistentDataException {
 
 		Module module;
 		SubModule subModule;
@@ -89,6 +89,9 @@ public class FAQReadWriteService {
 		currModuleName 		= CommonUtil.getNameFormattedString(currModuleName);
 		currSubModuleName 	= CommonUtil.getNameFormattedString(currSubModuleName);
 		
+		String infoConcatenated = preChecksInfo + functionalInfo + technicalInfo + "";
+		
+		
 		//check for inconsistent data
 		/*if(newModuleName.isEmpty() || 
 				!newSubModuleName.isEmpty() && info.isEmpty() ||
@@ -97,11 +100,11 @@ public class FAQReadWriteService {
 		if(newModuleName.isEmpty())
 				throw new InconsistentDataException("Module name can not be empty.");
 		
-		if(!newSubModuleName.isEmpty() && info.isEmpty() ||
-				newSubModuleName.isEmpty() && !info.isEmpty())
+		if(!newSubModuleName.isEmpty() && infoConcatenated.isEmpty() ||
+				newSubModuleName.isEmpty() && !infoConcatenated.isEmpty())
 				throw new InconsistentDataException("Submodule name and Info must not be empty.");
 		
-		if(!newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !info.isEmpty()
+		if(!newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
 				&& (currModuleName.isEmpty() || modulesData.getModule(currModuleName)==null)) {
 			//create
 			module = new Module();
@@ -109,12 +112,12 @@ public class FAQReadWriteService {
 			
 			subModule = new SubModule();
 			subModule.setName(newSubModuleName);
-			subModule.setInfo(info);
+			subModule.setPreChecksInfo(preChecksInfo);
+			subModule.setFunctionalInfo(functionalInfo);
+			subModule.setTechnicalInfo(technicalInfo);
 			
 			module.addSubModule(subModule);
 			modulesData.addModule(module);
-			
-			mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
 		}
 		else {
 			module = modulesData.getModule(currModuleName);
@@ -126,14 +129,17 @@ public class FAQReadWriteService {
 			}
 			
 			//see if need to create submodule, currSubModuleName field is empty in page for create
-			if(!newSubModuleName.isEmpty() && !info.isEmpty()
+			if(!newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
 					&& (currSubModuleName.isEmpty() || module.getSubModule(currSubModuleName)==null)) {
 				subModule = new SubModule();
 				subModule.setName(newSubModuleName);
-				subModule.setInfo(info);
+				subModule.setPreChecksInfo(preChecksInfo);
+				subModule.setFunctionalInfo(functionalInfo);
+				subModule.setTechnicalInfo(technicalInfo);
 				module.addSubModule(subModule);
 			}
 			else {
+				//edit submodule
 				subModule = module.getSubModule(currSubModuleName);
 				//remove old name entry and insert new name entry
 				if (!currSubModuleName.equals(newSubModuleName)) {
@@ -141,11 +147,17 @@ public class FAQReadWriteService {
 					subModule.setName(newSubModuleName);
 					module.addSubModule(subModule);
 				}
-				if(!info.isEmpty())
-					subModule.setInfo(info);
+				
+				if(!infoConcatenated.isEmpty()) {
+					subModule.setPreChecksInfo(preChecksInfo);
+					subModule.setFunctionalInfo(functionalInfo);
+					subModule.setTechnicalInfo(technicalInfo);
+				}
 			}
-			mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
+
 		}
+		
+		mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
 		
 		
 	}

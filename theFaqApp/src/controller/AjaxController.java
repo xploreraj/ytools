@@ -33,7 +33,7 @@ public class AjaxController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		doPost(request, response);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class AjaxController extends HttpServlet {
 		}
 		else if("getSubModuleNames".equals(action)) {
 			String moduleName = request.getParameter("moduleName");
-			String json = FAQReadWriteService.getSubModuleNamesAsJson(modulesData, moduleName);
+			String json = FAQReadWriteService.getSubModuleNames(modulesData, moduleName);
             out.write(json);
 		}
 		else if("getSubModule".equals(action)) {
@@ -69,10 +69,14 @@ public class AjaxController extends HttpServlet {
 			String newModuleName = request.getParameter("newModuleName");
 			String currSubModuleName = request.getParameter("currSubModuleName");
 			String newSubModuleName = request.getParameter("newSubModuleName");
-			String info = request.getParameter("info");
+			String preChecksInfo = request.getParameter("preChecksInfo");
+			String functionalInfo = request.getParameter("functionalInfo");
+			String technicalInfo = request.getParameter("technicalInfo");
 			
 			try {
-				FAQReadWriteService.saveModuleData(modulesData, currModuleName, newModuleName, currSubModuleName, newSubModuleName, info);
+				FAQReadWriteService.saveModuleData(modulesData, currModuleName, newModuleName, 
+						currSubModuleName, newSubModuleName, 
+						preChecksInfo, functionalInfo, technicalInfo);
 				response.setStatus(201);
 				out.print("Data successfully saved.");
 			} catch (InconsistentDataException e) {
