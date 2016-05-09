@@ -1,5 +1,7 @@
 package service;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,21 +12,28 @@ import javax.servlet.http.HttpServletRequest;
 import model.Module;
 import model.SubModule;
 
+import org.boon.Boon;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
 
 import data.ModulesData;
 
-public class FAQReadWriteService {
+public class DataService {
 	
 	private static ObjectMapper mapper = JsonFactory.create();
-	private static final String FILE_NAME = "C:\\Users\\rbiswas\\Documents\\GitHub\\ytools\\theFaqApp\\data\\info_db.json"; //"\\theFaqApp\\data\\info_db.json";
+	private static final String FILE_NAME = "C:/Users/rbiswas/Documents/GitHub/ytools/theFaqApp/data/info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
-		/*
-		 * TO DO: file can be empty initially, this gives class cast exception
-		 */
-		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
+
+		ModulesData modulesData;
+		try {
+			modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
+		}
+		catch(ClassCastException e) {
+			//If file is empty, then Boon throws CCE while trying to map with ModulesData.class
+			modulesData = null;
+			System.out.println("modules data=" + modulesData);
+		}
 		return modulesData;
 	}
 	
@@ -104,10 +113,12 @@ public class FAQReadWriteService {
 				newSubModuleName.isEmpty() && !infoConcatenated.isEmpty())
 				throw new InconsistentDataException("Submodule name and Info must not be empty.");
 		
-		if(!newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
+		if(modulesData == null || !newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
 				&& (currModuleName.isEmpty() || modulesData.getModule(currModuleName)==null)) {
 			//create
 			module = new Module();
+			if(modulesData == null)
+				modulesData = new ModulesData();
 			module.setName(newModuleName);
 			
 			subModule = new SubModule();

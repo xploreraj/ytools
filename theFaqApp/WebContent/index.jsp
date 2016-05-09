@@ -172,7 +172,7 @@ Step 2:
 	<option label="Select submodule">Select</option>
 </select>
 
-<b><a href="create_edit.jsp">Create New or Edit Info</a></b>
+<b><a href="login.jsp">Create New or Edit Info</a></b>
 
 <br>
 <br>
