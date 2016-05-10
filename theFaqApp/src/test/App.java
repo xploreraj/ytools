@@ -79,6 +79,8 @@ public class App {
 		Set<String> moduleSet = modulesData1.getModuleNames();
 		System.out.println(moduleSet);
 		//for(Module mod: moduleSet)
+		
+		System.out.println(new File("").getAbsolutePath());
 	}
 
 }

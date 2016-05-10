@@ -1,18 +1,13 @@
 package service;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import model.Module;
 import model.SubModule;
 
-import org.boon.Boon;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
 
@@ -21,7 +16,6 @@ import data.ModulesData;
 public class DataService {
 	
 	private static ObjectMapper mapper = JsonFactory.create();
-<<<<<<< HEAD:theFaqApp/src/service/DataService.java
 	private static final String FILE_NAME = "C:/Users/rbiswas/Documents/GitHub/ytools/theFaqApp/data/info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
@@ -33,17 +27,8 @@ public class DataService {
 		catch(ClassCastException e) {
 			//If file is empty, then Boon throws CCE while trying to map with ModulesData.class
 			modulesData = null;
-			System.out.println("modules data=" + modulesData);
+			System.out.println("modules data in classcastException=" + modulesData);
 		}
-=======
-	private static final String FILE_NAME = "C:\\Users\\rbiswas\\Documents\\GitHub\\ytools\\theFaqApp\\data\\info_db.json"; //"\\theFaqApp\\data\\info_db.json";
-	
-	public static ModulesData getModulesData() throws FileNotFoundException {
-		/*
-		 * TO DO: file can be empty initially, this gives class cast exception
-		 */
-		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
->>>>>>> master:theFaqApp/src/service/FAQReadWriteService.java
 		return modulesData;
 	}
 	
@@ -123,11 +108,7 @@ public class DataService {
 				newSubModuleName.isEmpty() && !infoConcatenated.isEmpty())
 				throw new InconsistentDataException("Submodule name and Info must not be empty.");
 		
-<<<<<<< HEAD:theFaqApp/src/service/DataService.java
 		if(modulesData == null || !newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
-=======
-		if(!newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
->>>>>>> master:theFaqApp/src/service/FAQReadWriteService.java
 				&& (currModuleName.isEmpty() || modulesData.getModule(currModuleName)==null)) {
 			//create
 			module = new Module();
@@ -179,7 +160,6 @@ public class DataService {
 					subModule.setTechnicalInfo(technicalInfo);
 				}
 			}
-
 		}
 		
 		mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
