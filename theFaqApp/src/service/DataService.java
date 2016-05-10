@@ -21,6 +21,7 @@ import data.ModulesData;
 public class DataService {
 	
 	private static ObjectMapper mapper = JsonFactory.create();
+<<<<<<< HEAD:theFaqApp/src/service/DataService.java
 	private static final String FILE_NAME = "C:/Users/rbiswas/Documents/GitHub/ytools/theFaqApp/data/info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
@@ -34,6 +35,15 @@ public class DataService {
 			modulesData = null;
 			System.out.println("modules data=" + modulesData);
 		}
+=======
+	private static final String FILE_NAME = "C:\\Users\\rbiswas\\Documents\\GitHub\\ytools\\theFaqApp\\data\\info_db.json"; //"\\theFaqApp\\data\\info_db.json";
+	
+	public static ModulesData getModulesData() throws FileNotFoundException {
+		/*
+		 * TO DO: file can be empty initially, this gives class cast exception
+		 */
+		ModulesData modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
+>>>>>>> master:theFaqApp/src/service/FAQReadWriteService.java
 		return modulesData;
 	}
 	
@@ -113,7 +123,11 @@ public class DataService {
 				newSubModuleName.isEmpty() && !infoConcatenated.isEmpty())
 				throw new InconsistentDataException("Submodule name and Info must not be empty.");
 		
+<<<<<<< HEAD:theFaqApp/src/service/DataService.java
 		if(modulesData == null || !newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
+=======
+		if(!newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
+>>>>>>> master:theFaqApp/src/service/FAQReadWriteService.java
 				&& (currModuleName.isEmpty() || modulesData.getModule(currModuleName)==null)) {
 			//create
 			module = new Module();
