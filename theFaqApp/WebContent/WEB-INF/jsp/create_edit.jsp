@@ -55,7 +55,7 @@
 		return true;
 	}
 
-	//pass a message to raise error, or pass nothing to remove existing error
+	//pass a message to raise error, or pass nothing to remove existing errors
 	function errorHelper(isError, message) {
 		if(isError == undefined && message == undefined) {
 			//clear span
