@@ -51,7 +51,7 @@
 		return true;
 	}
 
-	//pass a message to raise error, or pass nothing to remove existing error
+	//pass a message to raise error, or pass nothing to remove existing errors
 	function errorHelper(isError, message) {
 		if(isError == undefined && message == undefined) {
 			//clear span
@@ -68,7 +68,6 @@
 	}
 /*
  * This file has the AJAX calls and JQUERY page manipulation work functions for JSPs 
- * Rajdeep
  */
 
  	$(document).change(function(){
@@ -261,7 +260,10 @@
 </script>
 </head>
 <body>
-	<table>
+	<center><h1>Admin Console</h1></center>
+	<div align="right" style="font-size: 15"><a href="logout">Logout</a></div>
+	<hr>
+	<table align="center">
 		<tr>
 			<td>
 				<select name="module" id="module" style="width: 150px" title="Select the parent module">

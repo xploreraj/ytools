@@ -27,6 +27,8 @@ public class Module implements Serializable, Comparable<Module>{
 	}
 	
 	public Set<String> getSubModuleNames() {
+		if (subModulesMap.isEmpty())
+			return null;
 		return new TreeSet<String>(subModulesMap.keySet());
 	}
 //	

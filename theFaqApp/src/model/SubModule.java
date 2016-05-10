@@ -1,8 +1,6 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Date;
-
 import org.boon.json.annotations.JsonInclude;
 
 import service.CommonUtil;
