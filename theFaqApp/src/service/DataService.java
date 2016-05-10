@@ -32,7 +32,7 @@ public class DataService {
 		catch(ClassCastException e) {
 			//If file is empty, then Boon throws CCE while trying to map with ModulesData.class
 			modulesData = null;
-			System.out.println("modules data=" + modulesData);
+			System.out.println("modules data in classcastException=" + modulesData);
 		}
 		return modulesData;
 	}
