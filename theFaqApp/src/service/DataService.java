@@ -20,6 +20,7 @@ public class DataService {
 	private static final String FILE_NAME = "C:/Users/rbiswas/Documents/GitHub/ytools/theFaqApp/data/info_db.json";
 	
 	public static ModulesData getModulesData() throws FileNotFoundException {
+
 		ModulesData modulesData;
 		try {
 			modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);

@@ -27,7 +27,6 @@
 	        <span id="error" class="error-span">${requestScope.error}</span>
 		</form>
 		
-		
 	</div>
 </div>
 </body>

@@ -1,7 +1,6 @@
 package model;
 
 import java.io.Serializable;
-
 import org.boon.json.annotations.JsonIgnore;
 import org.boon.json.annotations.JsonInclude;
 
