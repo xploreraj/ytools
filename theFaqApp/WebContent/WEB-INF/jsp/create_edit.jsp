@@ -9,10 +9,21 @@
 <script type="text/javascript" src="assets/js/jquery-2.1.3.min.js"></script>
 
 <style>
-	td {vertical-align: top;}
+table {
+	margin-bottom: 50px;
+}
+td {
+	vertical-align: top;
+}
 </style>
 
 <script type="text/javascript">
+
+	function showFormattingTips() {
+		window.open("formatting-tips.html", 
+				"_blank", 
+				"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=570,height=410");
+	}
 
 	function showInfoTextAreas(preChecks, funcInfo, techInfo) {
 
@@ -255,7 +266,6 @@
 					window.location.reload(true);
 				},
 				error: function(jqXHR, textStatus, message) {
-					alert(textStatus + ": " + message);
 					errorHelper(true, message);
 				},
 				complete: function(){
@@ -269,7 +279,8 @@
 </head>
 <body>
 	<center><h1>Admin Console</h1></center>
-	<div align="right" style="font-size: 15"><a href="logout">Logout</a></div>
+	<div align="right" style="font-size: 15"><a onclick="showFormattingTips()">Formatting Tips</a> | 
+	<a href="logout">Logout</a></div>
 	<hr>
 	<table align="center">
 		<tr>

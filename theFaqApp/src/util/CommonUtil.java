@@ -50,7 +50,7 @@ public class CommonUtil {
 			return jsonString;
 		
 		//1. replace all newline characters with <br> tags, not inside code tags
-		String regex1="\\[code=([a-z]*)].*\\[/code]";
+		String regex1="\\[code=(java|js|sql|xml)].*\\[/code]";
 		Pattern pattern = Pattern.compile(regex1, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(jsonString);
 		int start=0, end=0;
@@ -70,9 +70,10 @@ public class CommonUtil {
 			start = matcher.end()+1;
 			mod = mod+matcher.group();
 		}
+		mod = mod + jsonString.substring(start);
 		
 		//2. replace all opening code tags
-		String regex2 = "\\[code=([a-z]*)]";
+		String regex2 = "\\[code=(java|js|sql|xml)]";
 		Pattern pattern2 = Pattern.compile(regex2, Pattern.CASE_INSENSITIVE);
 		Matcher matcher2 = pattern2.matcher(mod);
 		StringBuffer sb = new StringBuffer();

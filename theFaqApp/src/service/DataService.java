@@ -58,15 +58,14 @@ public class DataService {
 	 * @param modulesData
 	 * @param modulename
 	 * @param subModuleName
-	 * @param admin 
+	 * @param formatInfo 
 	 * @return
 	 */
 	public static String getSubModule(ModulesData modulesData, String modulename,
-			String subModuleName, boolean admin) {
+			String subModuleName, boolean formatInfo) {
 		Module module = modulesData.getModule(modulename);
 		SubModule subModule = module.getSubModule(subModuleName);
-		if (!admin) {
-			//parse corresponding JSON data into HTML tags
+		if (formatInfo) {
 			subModule.parseJson2HtmlSubModuleInfos();
 		}
 		String json = mapper.toJson(subModule);

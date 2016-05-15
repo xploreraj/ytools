@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Formatting Tips</title>
+	</head>
+	<body>
+		<h3 style="color: blue; text-align: center;">
+			Text formatting tips for info sections</h3>
+		<p>
+			1. You can use tags like&nbsp;&lt;b&gt;, &lt;ol&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;h4&gt; etc to format textual data in info sections. Use of &lt;br&gt; tag is not needed.&nbsp;<strong>Do not use other tags that might break UI</strong>, which you can validate in home page.</p>
+		<p>
+			2. To include a code snippet along with your info,</p>
+		<ol>
+			<li>
+				make sure you do proper indentation in notepad or eclipse,</li>
+			<li>
+				trim additional whitespaces after step 1, and</li>
+			<li>
+				include the code inside code tags as follows:<br />
+				<span style="font-family:courier new,courier,monospace;"><span style="background-color:#ffff00;">[code=java]<span style="color:#008000;">//your code</span>[/code]</span></span></li>
+		</ol>
+		<p>
+			Currently, only java, js, sql and xml are suported.<br />
+			Multiple code snippets can be added <strong>however you should not nest them</strong>.</p>
+		<p>
+			3. The module and submodule names are automatically title cased, left and right trimmed, and saved. Code snippets automatically get a linebreak before and after.</p>
+		<p>
+			4. <strong><span style="color:#ff0000;">Avoid passing scripts or other syntactic sugars. The app is not designed to handle and data might become corrupt or permanently lost.</span></strong></p>
+	</body>
+</html>
