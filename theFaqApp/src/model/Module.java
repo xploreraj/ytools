@@ -3,8 +3,8 @@ package model;
 import java.io.Serializable;
 import java.util.*;
 
-import service.CommonUtil;
 import service.InconsistentDataException;
+import util.CommonUtil;
 
 public class Module implements Serializable, Comparable<Module>{
 
@@ -31,11 +31,7 @@ public class Module implements Serializable, Comparable<Module>{
 			return null;
 		return new TreeSet<String>(subModulesMap.keySet());
 	}
-//	
-//	public SubModule getSubModule(String name) {
-//		return subModulesMap.get(name);
-//	}
-//	
+	
 	public void addSubModule(SubModule subModule) throws InconsistentDataException {
 		if(subModulesMap.containsKey(subModule.getName()))
 			throw new InconsistentDataException("Addition of sub module <b>" + subModule.getName() + "</b> failed as another sub module by same name already exists!");

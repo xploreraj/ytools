@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class LoginValidator
+ * Servlet implementation class LoginServlet
  */
 @WebServlet(description = "validates login and dispatches to create_edit.jsp", urlPatterns = { "/admin", "/logout" })
 //@WebServlet("/admin")
-public class LoginValidator extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

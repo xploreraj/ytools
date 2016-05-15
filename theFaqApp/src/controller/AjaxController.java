@@ -62,7 +62,12 @@ public class AjaxController extends HttpServlet {
 		else if("getSubModule".equals(action)) {
 			String modulename = request.getParameter("moduleName");
 			String subModuleName = request.getParameter("subModuleName");
-			String json = DataService.getSubModule(modulesData, modulename, subModuleName);
+			boolean admin = true;
+			if ("guest".equals(request.getParameter("user"))){
+				admin = false;
+			}
+			String json = DataService.getSubModule(modulesData, modulename, subModuleName, admin);
+			System.out.println(modulesData.getModule(modulename).getSubModule(subModuleName).getFunctionalInfo());
 			out.write(json);
 		}
 		else if("submitForm".equals(action)) {
@@ -75,7 +80,7 @@ public class AjaxController extends HttpServlet {
 			String technicalInfo = request.getParameter("technicalInfo");
 			
 			try {
-				DataService.saveModuleData(modulesData, currModuleName, newModuleName, 
+				DataService.saveModuleData(currModuleName, newModuleName, 
 						currSubModuleName, newSubModuleName, 
 						preChecksInfo, functionalInfo, technicalInfo);
 				response.setStatus(201);

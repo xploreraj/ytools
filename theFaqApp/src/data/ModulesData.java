@@ -2,8 +2,8 @@ package data;
 
 import java.util.*;
 
-import service.CommonUtil;
 import service.InconsistentDataException;
+import util.CommonUtil;
 import model.Module;
 
 public class ModulesData {

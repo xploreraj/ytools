@@ -1,194 +1,215 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
 <% response.setHeader("Cache-Control","max-age=0"); %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+
 <head>
+
+<style type="text/css">
+table {
+	width: 1000px;
+	/* margin-left: 10%; */ /* raj */
+	/* margin-top: 5%; */
+	/* margin-bottom: 10px; */
+}
+td {
+	vertical-align: top;
+	/* text-align: center; raj */
+}
+.menuTd {
+	vertical-align: top;
+}
+.frame {
+
+}
+html, body {
+    font-family: Verdana, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    background-color: #f3f3f3;
+    background: url("assets/images/background-8.jpg") no-repeat center fixed;
+    background-size: cover;
+}
+.infoPanel {
+	display: none;
+	/* background: rgba(215,215,215,0.4); */
+	border: none;
+	width: 100%;
+	overflow: auto;
+	padding-bottom: 10px;	
+}
+.footer {
+	text-align: center;
+	vertical-align: bottom;
+	position: relative;
+	margin-top: -10px;
+	height: 10px;
+	clear: both;
+}
+</style>
+
+<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shCore.js"></script>
+<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushJava.js"></script>
+<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushSql.js"></script>
+
+<link href="assets/syntaxhighlighter/styles/shCoreMidnight.css" rel="stylesheet" type="text/css" />
+<link href="assets/syntaxhighlighter/styles/shThemeMidnight.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+<jsp:include page="header.jsp"></jsp:include>
+<hr><br>
+<table>
+	<tr>
+		<td class="menuTD" width="20%">
+			<select name="module" id="module" style="width: 150px"
+				title="Select the parent module">
+					<option label="Select module">Select</option>
+			</select>
+			<select name="subModule" id="subModule"
+				style="width: 150px; display: none" title="Select the sub module">
+					<option label="Select submodule">Select</option>
+			</select>
+		</td>
+		<td width="80%">
+			<div class="infoPanel"><jsp:include page="info.jsp"></jsp:include></div>
+		</td>
+	</tr>
+</table>
+
+<br>
+<%-- <jsp:include page="footer.jsp"></jsp:include> --%>
+
+</body>
+<head>
+	  
 <title>PFM Modules FAQ</title>
-<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="assets/js/jquery-2.1.3.min.js"></script>
 <script type="text/javascript">
 /*
  * This file has the AJAX calls and JQUERY page manipulation work functions for JSPs 
  */
 
+function hideInfoTextAreas(emptyContents){
+	if(emptyContents==true){
+		$('#preChecksInfo').html('');
+		$('#functionalInfo').html('');
+		$('#technicalInfo').html('');
+	}
+	$('.infoPanel').hide();
+ }
 
-	$(document).ready(function(){
+
+$(document).ready(function(){
+
+	//1. Populate parent modules into dropdown
+	$.ajax({
+		type:'POST',
+		data: {
+			action: 'getModuleNames'
+		},
+		dataType: 'json',
+		url:'AjaxController',
+		success: function(response){
+	        $.each(response, function(index, value) {
+	        	$('<option>').val(value).text(value).appendTo($('#module'));
+	      	});
+		}
+	}); //1.
+
+	//2. Populate submodules in dropdown depending upon parent module selection
+	$('#module').change(function(){
+
+		hideInfoTextAreas(true);
+
+		//on change, clear dropdown population
+		$('#subModule').find('option:gt(0)').remove();
+				
+		var moduleName = $('select#module').val();
+				
+		if(moduleName == 'Select') {
+			$('#subModule').hide();
+			return;
+		}
 		
-		//1. Populate parent modules into dropdown
 		$.ajax({
 			type:'POST',
 			data: {
-				action: 'getModuleNames'
+				moduleName: moduleName,
+				action: 'getSubModuleNames'
 			},
 			dataType: 'json',
 			url:'AjaxController',
 			success: function(response){
 		        $.each(response, function(index, value) {
-		        	$('<option>').val(value).text(value).appendTo($('#module'));
+			        $('<option>').val(value).text(value).appendTo($('#subModule'));
 		      	});
-			}
-		}); //1.
 
-		//2. Populate submodules in dropdown depending upon parent module selection
-		$('#module').change(function(){
-
-			//info section
-			var module_submodule = $('#module_submodule');
-			var preChecksInfo = $('#preChecksInfo');
-			var functionalInfo = $('#functionalInfo');
-			var technicalInfo = $('#technicalInfo');
-
-			//on change, clear dropdown population and info
-			$('#subModule').find('option:gt(0)').remove();
-			//$('#subModule').find('option:gt(0):lt(-1)').remove();
-			module_submodule.html('');
-			//info.html('<h3>Please select module and corresponding sub-module from above dropdowns, or create new!</h3>');
-			preChecksInfo.html('');
-			functionalInfo.html('');
-			technicalInfo.html('');
-					
-			var moduleName = $('select#module').val();
-					
-			if(moduleName == 'Select') {
-				return;
-			}
-			
-			$.ajax({
-				type:'POST',
-				data: {
-					moduleName: moduleName,
-					action: 'getSubModuleNames'
-				},
-				dataType: 'json',
-				url:'AjaxController',
-				success: function(response){
-			        $.each(response, function(index, value) {
-				        $('<option>').val(value).text(value).appendTo($('#subModule'));
-			        	//if we have multiple options by default and want to insert before last option
-			        	//$('#subModule option').eq(-1).before( $('<option>').val(value).text(value) );
-			      	});
-				}
-			});
-
-		}); //2.
-
-		//3. Populate 'info' section depending upon submodule selection
-		$('#subModule').change(function(){
-
-			var moduleName = $('select#module').val();
-			var subModuleName = $('select#subModule').val();
-
-			//info area
-			var module_submodule = $('#module_submodule');
-			var preChecksInfo = $('#preChecksInfo');
-			var functionalInfo = $('#functionalInfo');
-			var technicalInfo = $('#technicalInfo');
-
-			module_submodule.html('');
-			
-			if(moduleName == 'Select' || subModuleName == 'Select') {
-				//info.html('<h3>Please select module and corresponding sub-module from above dropdowns, or create new!</h3>');
-				preChecksInfo.html('');
-				technicalInfo.html('');
-				functionalInfo.html('');
-				return;
-			}
-				
-			$.ajax({
-				type:'POST',
-				data: {
-					moduleName: moduleName,
-					subModuleName: subModuleName,
-					action: 'getSubModule'
-				},
-				dataType: 'json',
-				url:'AjaxController',
-				success: function(response){
-					if (response != null) {
-						/* $.each(response, function() {
-				        	//$('#info').html('Sub-module Name: ' + response.name + '<br/>');
-				        	$('#info').html('').after('Sub-module Name: ' + response.name + '<br/>');
-				        	var i = 1;
-				        	$.each(response.infoList, function(index, value) {
-				        		$('#info').html('').after(i + '. ' + value + '<br/>');
-				        		i += 1;
-					        });
-				      	}); */
-
-				      	//prepare information
-				      	
-						
-						module_submodule.append('<h3>' + moduleName + ': ' + response.name + '</h3>');
-				      	if(response.preChecksInfo)
-				      		preChecksInfo.html('<h4>PRE-CHECKS</h4>' + response.preChecksInfo.replace(/\n/g,"<br>"));
-				      	if(response.functionalInfo)
-					      	functionalInfo.html('<h4>FUNTIONAL INFO</h4>' + response.functionalInfo.replace(/\n/g,"<br>"));
-				      	if(response.technicalInfo)
-					      	technicalInfo.html('<h4>TECHNICAL INFO</h4>' + response.technicalInfo.replace(/\n/g,"<br>"));
-				      	
-			        	/* $.each(response.info, function(index, value) {
-			        		//'index' is being used to number lines of info from 'infoList' in JSON
-			        		info.append((index+1) + '. ' + value + '<br/>');
-				        }); */
-					}
-					else {
-						$('#preChecksInfo').html('<h2>NO DATA RETURNED</h2>');
-					}
-				}
-			});//3.
-
+		      	$('#subModule').show();
+			},
 		});
 
-		/* $('#btnSum').click(function(){
-			var num1 = $('#number1').val();
-			var num2 = $('#number2').val();
+	}); //2.
+
+	//3. Populate 'info' section depending upon submodule selection
+	$('#subModule').change(function(){
+
+		var moduleName = $('select#module').val();
+		var subModuleName = $('select#subModule').val();
+		
+		if(moduleName == 'Select' || subModuleName == 'Select') {
+			hideInfoTextAreas(true);
+			return;
+		}
+
+		var preChecksInfo = $('#preChecksInfo');
+		var functionalInfo = $('#functionalInfo');
+		var technicalInfo = $('#technicalInfo');
 			
-			$.ajax({
-				type:'POST',
-				data: {
-					number1: num1,
-					number2: num2,
-					action: 'demo2'
-				},
-				url:'AjaxController',
-				success: function(result){
-					$('#result2').html(result);
+		$.ajax({
+			type:'POST',
+			data: {
+				moduleName: moduleName,
+				subModuleName: subModuleName,
+				action: 'getSubModule',
+				user: 'guest'
+			},
+			dataType: 'json',
+			url:'AjaxController',
+			success: function(response){
+				if (response != null) {
+			      	//prepare information
+					if(response.preChecksInfo)
+			      		preChecksInfo.html(response.preChecksInfo);
+			      	else
+				      	preChecksInfo.html('NA');
+				      	
+			      	if(response.functionalInfo)
+				      	functionalInfo.html(response.functionalInfo);
+			      	else
+				      	functionalInfo.html('NA');
+			      	if(response.technicalInfo)
+				      	technicalInfo.html(response.technicalInfo);
+			      	else
+				      	technicalInfo.html('NA');
+			     	
+			      	$('.infoPanel').show();
+
+			      	//SyntaxHighlighter.all();
+			      	SyntaxHighlighter.highlight();
 				}
-			});
-		}); */
-	});
+				
+			}
+		});
+	}); //3.
+});
 
 </script>
 
+
 </head>
-<body>
 
-Step 1:
-<select name="module" id="module" style="width: 150px" title="Select the parent module">
-	<option label="Select module">Select</option>
-</select>
-Step 2:
-<select name="subModule" id="subModule" style="width: 150px" title="Select the sub module">
-	<option label="Select submodule">Select</option>
-</select>
-
-<b><a href="login.jsp">Create New or Edit Info</a></b>
-
-<br>
-<br>
-<fieldset>
-	<legend>Info:</legend>
-	<!-- <span id="info">
-		<h3>Please select module and corresponding sub-module from above dropdowns, or create new!</h3>
-	</span> -->
-	<div id="module_submodule"></div>
-	<br>
-	<div id="preChecksInfo"></div>
-	<br>
-	<div id="functionalInfo"></div>
-	<br>
-	<div id="technicalInfo"></div>
-</fieldset>
-
-</body>
 </html>

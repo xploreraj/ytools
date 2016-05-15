@@ -1,9 +1,11 @@
 package model;
 
 import java.io.Serializable;
+
+import org.boon.json.annotations.JsonIgnore;
 import org.boon.json.annotations.JsonInclude;
 
-import service.CommonUtil;
+import util.CommonUtil;
 
 public class SubModule implements Serializable, Comparable<SubModule> {
 
@@ -11,8 +13,9 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	
 	private @JsonInclude String name;
 	private @JsonInclude String functionalInfo;
-	private @ JsonInclude String technicalInfo;
+	private @JsonInclude String technicalInfo;
 	private @JsonInclude String preChecksInfo;
+	private @JsonIgnore boolean writeLock;
 	
 	public String getName() {
 		return name;
@@ -38,16 +41,31 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	public void setPreChecksInfo(String preChecksInfo) {
 		this.preChecksInfo = preChecksInfo;
 	}
-	/*public ArrayList<String> getInfoList() {
-		return infoList;
+	
+	public void parseJson2HtmlSubModuleInfos() {
+		setPreChecksInfo(CommonUtil.parseJsontoHTML(getPreChecksInfo()));
+		setFunctionalInfo(CommonUtil.parseJsontoHTML(getFunctionalInfo()));
+		setTechnicalInfo(CommonUtil.parseJsontoHTML(getTechnicalInfo()));
 	}
 	
-	public void addInfo(String info) {
-		infoList.add(info);
-	}*/
 	@Override
 	public int compareTo(SubModule subModule) {
 		return this.getName().compareToIgnoreCase(subModule.getName());
+	}
+	/**
+	 * Someone should get a lock for write access
+	 * @return true if lock obtained, false if write already locked by someone else
+	 */
+	public boolean tryLockWrite(){
+		return writeLock ? false : (writeLock=true);
+			
+	}
+	/**
+	 * option of releasing the lock in between,
+	 * or after saving data to file
+	 */
+	public void unlockWrite(){
+		writeLock = false;
 	}
 	
 }
