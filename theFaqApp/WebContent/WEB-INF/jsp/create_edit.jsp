@@ -5,17 +5,31 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Create or Edit PFM Module Info</title>
-<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+
+<script type="text/javascript" src="assets/js/jquery-2.1.3.min.js"></script>
+
+<style>
+	td {vertical-align: top;}
+</style>
+
 <script type="text/javascript">
 
 	function showInfoTextAreas(preChecks, funcInfo, techInfo) {
-		$('#preChecksInfo').val(preChecks).show();
-		$('#functionalInfo').val(funcInfo).show();
-		$('#technicalInfo').val(techInfo).show();
-		//$("tr:gt(2)").show();
+
 		$('#preChecksLegend').show();
 		$('#funcInfoLegend').show();
 		$('#techInfoLegend').show();
+		
+		if(arguments.length == 0) {
+			$('#preChecksInfo').val('').show();
+			$('#functionalInfo').val('').show();
+			$('#technicalInfo').val('').show();
+		}
+		else {
+			$('#preChecksInfo').val(preChecks).show();
+			$('#functionalInfo').val(funcInfo).show();
+			$('#technicalInfo').val(techInfo).show();
+		}
 	}
 
 	function hideInfoTextAreas() {
@@ -73,6 +87,7 @@
  	$(document).change(function(){
 		errorHelper();
  	});
+ 	
 	$(document).ready(function(){
 		
 		//1. Populate parent modules into dropdown
@@ -111,17 +126,13 @@
 			}
 			else if(moduleName == 'Create') {
 
-				$('#newModuleName').val('Enter module name').show();
-				$('#newSubModuleName').val('Enter submodule name').show();
+				$('#newModuleName').val('').show();
+				$('#newSubModuleName').show();
 				$('#currentModuleName').val('');
 				$('#subModule').hide();
 				$('#currentSubModuleName').val('');
 				
-				var preChecks = 'Enter pre checking steps here.\nSeparate lines using linebreaks.\n' +
-						'Do not use any tags, use only plaintext';
-				var funcInfo = 'Enter functional info here';
-				var techInfo = 'Enter technical info here';
-				showInfoTextAreas(preChecks, funcInfo, techInfo);
+				showInfoTextAreas();
 				showConfirmCheckbox(true);
 				//$('#submit').show();
 				
@@ -164,11 +175,8 @@
 				return;
 			}
 			if(subModuleName == 'Create' && moduleName != 'Select') {
-				$('#newSubModuleName').val('Enter submodule name').show();
-				var preChecks = 'Enter pre checks steps here.\nSeparate lines using linebreaks.\nDo not use any tags, use only plaintext';
-				var funcInfo = 'Enter functional info here.';
-				var techInfo = 'Enter technical info here.';
-				showInfoTextAreas(preChecks, funcInfo, techInfo);
+				$('#newSubModuleName').val('').show();
+				showInfoTextAreas();
 				showConfirmCheckbox(true);
 				return;
 			}
@@ -247,7 +255,7 @@
 					window.location.reload(true);
 				},
 				error: function(jqXHR, textStatus, message) {
-					//alert(textStatus + ": " + message);
+					alert(textStatus + ": " + message);
 					errorHelper(true, message);
 				},
 				complete: function(){
@@ -273,37 +281,39 @@
 			</td>
 			<td>
 				<input type="hidden" id="currentModuleName" value="">
-				<input type="text" style="display: none" id="newModuleName" style="width: 150px" maxlength="20" title="Enter Module Name">
+				<input type="text" style="display: none" id="newModuleName" style="width: 150px" maxlength="20" title="Enter Module Name" placeholder="Enter module name">
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<select name="subModule" id="subModule" style="width: 150px; display:none;'" title="Select the sub module" >
+				<select name="subModule" id="subModule" style="width: 150px; display:none;" title="Select the sub module" >
 					<option label="Select sub-module" style="font-style: italic;">Select</option>
 					<option label="Create new" style="font-style: italic;">Create</option>
 				</select>
 			</td>
 			<td>
 				<input type="hidden" id="currentSubModuleName" value="">
-				<input type="text" style="display: none" id="newSubModuleName" style="width: 150px" title="Enter Submodule Name">
+				<input type="text" style="display: none;" id="newSubModuleName" style="width: 150px" title="Enter Submodule Name" placeholder="Enter sub-module name">
 			</td>
 		</tr>
 		<tr>
 			<td id="preChecksLegend" style="display:none">Pre-checks</td>
 			<td>
-				<textarea style="display:none" cols="50" rows="10" id="preChecksInfo"></textarea>
+				<textarea id="preChecksInfo" style="display:none" cols="50" rows="10" 
+					placeholder="'Enter pre-checks for this submodule here...\nSeparate lines using linebreaks.\nDo not use any tags, use only plaintext">
+				</textarea>
 			</td>
 		</tr>
 		<tr>
 			<td id="funcInfoLegend" style="display:none">Functional Information</td>
 			<td>
-				<textarea style="display:none" cols="50" rows="10" id="functionalInfo"></textarea>
+				<textarea id="functionalInfo" style="display:none" cols="50" rows="10" placeholder="Enter functional information for this submodule here..."></textarea>
 			</td>
 		</tr>
 		<tr>
 			<td id="techInfoLegend" style="display:none">Technical Information</td>
 			<td>
-				<textarea style="display:none" cols="50" rows="10" id="technicalInfo"></textarea>
+				<textarea id="technicalInfo" style="display:none" cols="50" rows="10" placeholder="Enter technical information for this submodule here..."></textarea>
 			</td>
 		</tr>
 		<tr>
@@ -321,10 +331,4 @@
 	</table>
 	
 </body>
-
-<head>
-	<style>
-		td {vertical-align: top;}
-	</style>
-</head>
 </html>

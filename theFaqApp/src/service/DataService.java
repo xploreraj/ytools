@@ -11,6 +11,7 @@ import model.SubModule;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
 
+import util.CommonUtil;
 import data.ModulesData;
 
 public class DataService {
@@ -27,7 +28,6 @@ public class DataService {
 		catch(ClassCastException e) {
 			//If file is empty, then Boon throws CCE while trying to map with ModulesData.class
 			modulesData = null;
-			System.out.println("modules data in classcastException=" + modulesData);
 		}
 		return modulesData;
 	}
@@ -58,12 +58,17 @@ public class DataService {
 	 * @param modulesData
 	 * @param modulename
 	 * @param subModuleName
+	 * @param admin 
 	 * @return
 	 */
 	public static String getSubModule(ModulesData modulesData, String modulename,
-			String subModuleName) {
+			String subModuleName, boolean admin) {
 		Module module = modulesData.getModule(modulename);
 		SubModule subModule = module.getSubModule(subModuleName);
+		if (!admin) {
+			//parse corresponding JSON data into HTML tags
+			subModule.parseJson2HtmlSubModuleInfos();
+		}
 		String json = mapper.toJson(subModule);
 		return json;
 	}
@@ -80,13 +85,14 @@ public class DataService {
 	 * @throws FileNotFoundException
 	 * @throws InconsistentDataException 
 	 */
-	public static void saveModuleData(ModulesData modulesData, String currModuleName, String newModuleName, 
+	public static void saveModuleData(String currModuleName, String newModuleName, 
 			String currSubModuleName, String newSubModuleName, 
 			String preChecksInfo, String functionalInfo, String technicalInfo) 
 					throws FileNotFoundException, InconsistentDataException {
 
 		Module module;
 		SubModule subModule;
+		ModulesData modulesData = DataService.getModulesData();
 		
 		newModuleName 		= CommonUtil.getNameFormattedString(newModuleName);
 		newSubModuleName 	= CommonUtil.getNameFormattedString(newSubModuleName);
@@ -163,8 +169,6 @@ public class DataService {
 		}
 		
 		mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
-		
-		
 	}
 
 }

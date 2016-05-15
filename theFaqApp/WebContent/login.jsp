@@ -5,9 +5,13 @@
 <html>
 <head>
 <title>Login to Admin Console</title>
-<link rel="stylesheet" href="assets/form-mini.css">
+<link rel="stylesheet" href="assets/css/form-mini.css">
 </head>
 <body>
+<a href="./">
+	<img alt="Go to Home Page!" src="assets/images/home.png" style="height: 50px; width: 50px;" align="right" 
+		title="Go to Home Page!"/>
+</a>
 <br><br>
 <div class="main-content">
 	<div class="form-mini-container">
@@ -25,20 +29,6 @@
 		
 	</div>
 </div>
-
-
-<%-- <div id ="loginForm" align="center">
-	<h1>Admin Console</h1>
-	<hr>
-	<br><br>
-	<form method="POST" action="admin" onsubmit="return validateForm();">
-		<input type="password" id="password" name="password" placeholder="Enter password!">
-		<br><br>
-		<input type="submit" id="login" value="Login">
-	</form>
-	<br>
-	<span id="error" style="color: red;">${requestScope.error}</span>
-</div> --%>
 </body>
 <head>
 <script type="text/javascript">
