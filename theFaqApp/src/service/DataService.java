@@ -58,7 +58,7 @@ public class DataService {
 	 * @param modulesData
 	 * @param modulename
 	 * @param subModuleName
-	 * @param admin 
+	 * @param formatInfo 
 	 * @return
 	 */
 	public static String getSubModule(ModulesData modulesData, String modulename,

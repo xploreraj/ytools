@@ -266,7 +266,6 @@ td {
 					window.location.reload(true);
 				},
 				error: function(jqXHR, textStatus, message) {
-					alert(textStatus + ": " + message);
 					errorHelper(true, message);
 				},
 				complete: function(){

@@ -218,3 +218,13 @@ $(document).ready(function(){
 </head>
 
 </html>
+
+	<div id="preChecksInfo"></div>
+	<br>
+	<div id="functionalInfo"></div>
+	<br>
+	<div id="technicalInfo"></div>
+</fieldset>
+
+</body>
+</html>
