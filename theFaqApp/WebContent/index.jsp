@@ -11,15 +11,20 @@
 table {
 	width: 1000px;
 	/* margin-left: 10%; */ /* raj */
-	/* margin-top: 5%; */
-	/* margin-bottom: 10px; */
+	margin-bottom: 10px;
 }
 td {
 	vertical-align: top;
+	padding: 10px;
+	/* margin-left: 20%; */
+	/* padding-left: 20%; */
 	/* text-align: center; raj */
 }
 .menuTd {
 	vertical-align: top;
+}
+.infoPanelTD {
+	/* float: right; */
 }
 .frame {
 
@@ -38,7 +43,6 @@ html, body {
 	border: none;
 	width: 100%;
 	overflow: auto;
-	padding-bottom: 10px;	
 }
 .footer {
 	text-align: center;
@@ -53,7 +57,8 @@ html, body {
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shCore.js"></script>
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushJava.js"></script>
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushSql.js"></script>
-
+<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushXml.js"></script>
 <link href="assets/syntaxhighlighter/styles/shCoreMidnight.css" rel="stylesheet" type="text/css" />
 <link href="assets/syntaxhighlighter/styles/shThemeMidnight.css" rel="stylesheet" type="text/css" />
 
@@ -64,7 +69,7 @@ html, body {
 <hr><br>
 <table>
 	<tr>
-		<td class="menuTD" width="20%">
+		<td class="menuTD" width="20px">
 			<select name="module" id="module" style="width: 150px"
 				title="Select the parent module">
 					<option label="Select module">Select</option>
@@ -74,7 +79,7 @@ html, body {
 					<option label="Select submodule">Select</option>
 			</select>
 		</td>
-		<td width="80%">
+		<td class="infoPanelTD" width="80%">
 			<div class="infoPanel"><jsp:include page="info.jsp"></jsp:include></div>
 		</td>
 	</tr>
@@ -175,7 +180,7 @@ $(document).ready(function(){
 				moduleName: moduleName,
 				subModuleName: subModuleName,
 				action: 'getSubModule',
-				user: 'guest'
+				formatInfo: 'true'
 			},
 			dataType: 'json',
 			url:'AjaxController',

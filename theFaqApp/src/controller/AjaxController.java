@@ -62,12 +62,11 @@ public class AjaxController extends HttpServlet {
 		else if("getSubModule".equals(action)) {
 			String modulename = request.getParameter("moduleName");
 			String subModuleName = request.getParameter("subModuleName");
-			boolean admin = true;
-			if ("guest".equals(request.getParameter("user"))){
-				admin = false;
+			boolean formatInfo = false;
+			if ("true".equals(request.getParameter("formatInfo"))){
+				formatInfo = true;
 			}
-			String json = DataService.getSubModule(modulesData, modulename, subModuleName, admin);
-			System.out.println(modulesData.getModule(modulename).getSubModule(subModuleName).getFunctionalInfo());
+			String json = DataService.getSubModule(modulesData, modulename, subModuleName, formatInfo);
 			out.write(json);
 		}
 		else if("submitForm".equals(action)) {
