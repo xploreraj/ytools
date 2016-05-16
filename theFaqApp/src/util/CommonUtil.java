@@ -35,11 +35,11 @@ public class CommonUtil {
 	/**
 	 * Parse raw JSON data into HTML formattable text.
 	 * At this moment only following substritutions are supported:<br>
-	 * 1. Replace '\n' to '&lt;br&gt;', for occurrances not inside [code tags].<br>
+	 * 1. Replace '\n' to '&lt;br&gt;', for occurrances not inside [code] tags.<br>
 	 * 2. Change [code] tags to &lt;pre&gt; tags since we are using Alex Gorbatchev's syntax highlighter.<br>
-	 * Will not attempt to parse wrongly formated data like wrong tags etc
-	 * 
-	 * BUG: multiple tags will not be honored, so dont try
+	 * Works with only following tags regex:
+	 * <b>[code=(java|js|sql|xml)][/code]</b><br>
+	 * Nested tags will result in wrong formatting and improper rendering in UI.
 	 * 
 	 * @param jsonString
 	 * @return parsed HTML String
@@ -66,11 +66,13 @@ public class CommonUtil {
 		
 		while(matcher.find()){
 			end = matcher.start();
+			//start = end;
 			mod = jsonString.substring(start,end).replaceAll("\n", "<br>");
-			start = matcher.end()+1;
-			mod = mod+matcher.group();
+			start = matcher.end();
+			mod = mod+matcher.group().replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 		}
-		mod = mod + jsonString.substring(start);
+		if (start < jsonString.length())
+			mod = mod + jsonString.substring(start);
 		
 		//2. replace all opening code tags
 		String regex2 = "\\[code=(java|js|sql|xml)]";

@@ -22,7 +22,7 @@ td {
 	function showFormattingTips() {
 		window.open("formatting-tips.html", 
 				"_blank", 
-				"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=570,height=410");
+				"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=570,height=430");
 	}
 
 	function showInfoTextAreas(preChecks, funcInfo, techInfo) {
@@ -279,8 +279,10 @@ td {
 </head>
 <body>
 	<center><h1>Admin Console</h1></center>
-	<div align="right" style="font-size: 15"><a onclick="showFormattingTips()">Formatting Tips</a> | 
-	<a href="logout">Logout</a></div>
+	<div align="right" style="font-size: 15;">
+		<b><a onclick="showFormattingTips()">How to format?</a></b> | 
+		<a href="logout">Logout</a>
+	</div>
 	<hr>
 	<table align="center">
 		<tr>

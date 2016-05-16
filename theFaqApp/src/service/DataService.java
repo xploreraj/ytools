@@ -93,14 +93,6 @@ public class DataService {
 		SubModule subModule;
 		ModulesData modulesData = DataService.getModulesData();
 		
-		newModuleName 		= CommonUtil.getNameFormattedString(newModuleName);
-		newSubModuleName 	= CommonUtil.getNameFormattedString(newSubModuleName);
-		currModuleName 		= CommonUtil.getNameFormattedString(currModuleName);
-		currSubModuleName 	= CommonUtil.getNameFormattedString(currSubModuleName);
-		
-		String infoConcatenated = preChecksInfo + functionalInfo + technicalInfo + "";
-		
-		
 		//check for inconsistent data
 		/*if(newModuleName.isEmpty() || 
 				!newSubModuleName.isEmpty() && info.isEmpty() ||
@@ -109,11 +101,20 @@ public class DataService {
 		if(newModuleName.isEmpty())
 				throw new InconsistentDataException("Module name can not be empty.");
 		
-		if(!newSubModuleName.isEmpty() && infoConcatenated.isEmpty() ||
-				newSubModuleName.isEmpty() && !infoConcatenated.isEmpty())
+		boolean infoPresent = preChecksInfo!=null || !preChecksInfo.isEmpty() ||
+				functionalInfo!=null || !functionalInfo.isEmpty() ||
+				technicalInfo!=null || !technicalInfo.isEmpty();
+		
+		if(!newSubModuleName.isEmpty() && !infoPresent ||
+				newSubModuleName.isEmpty() && infoPresent)
 				throw new InconsistentDataException("Submodule name and Info must not be empty.");
 		
-		if(modulesData == null || !newModuleName.isEmpty() && !newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
+		newModuleName 		= CommonUtil.getNameFormattedString(newModuleName);
+		newSubModuleName 	= CommonUtil.getNameFormattedString(newSubModuleName);
+		currModuleName 		= CommonUtil.getNameFormattedString(currModuleName);
+		currSubModuleName 	= CommonUtil.getNameFormattedString(currSubModuleName);
+		
+		if(modulesData == null || !newModuleName.isEmpty() && !newSubModuleName.isEmpty() && infoPresent
 				&& (currModuleName.isEmpty() || modulesData.getModule(currModuleName)==null)) {
 			//create
 			module = new Module();
@@ -123,9 +124,8 @@ public class DataService {
 			
 			subModule = new SubModule();
 			subModule.setName(newSubModuleName);
-			subModule.setPreChecksInfo(preChecksInfo);
-			subModule.setFunctionalInfo(functionalInfo);
-			subModule.setTechnicalInfo(technicalInfo);
+			subModule.setInfos(preChecksInfo, functionalInfo, technicalInfo);
+			subModule.setLastUpdated();
 			
 			module.addSubModule(subModule);
 			modulesData.addModule(module);
@@ -140,30 +140,29 @@ public class DataService {
 			}
 			
 			//see if need to create submodule, currSubModuleName field is empty in page for create
-			if(!newSubModuleName.isEmpty() && !infoConcatenated.isEmpty()
+			if(!newSubModuleName.isEmpty() && infoPresent
 					&& (currSubModuleName.isEmpty() || module.getSubModule(currSubModuleName)==null)) {
 				subModule = new SubModule();
 				subModule.setName(newSubModuleName);
-				subModule.setPreChecksInfo(preChecksInfo);
-				subModule.setFunctionalInfo(functionalInfo);
-				subModule.setTechnicalInfo(technicalInfo);
+				subModule.setInfos(preChecksInfo, functionalInfo, technicalInfo);
+				subModule.setLastUpdated();
 				module.addSubModule(subModule);
 			}
 			else {
 				//edit submodule
 				subModule = module.getSubModule(currSubModuleName);
-				//remove old name entry and insert new name entry
+				//remove old name entry and insert new name entry?
 				if (!currSubModuleName.equals(newSubModuleName)) {
 					module.removeSubModule(currSubModuleName);
 					subModule.setName(newSubModuleName);
 					module.addSubModule(subModule);
 				}
 				
-				if(!infoConcatenated.isEmpty()) {
-					subModule.setPreChecksInfo(preChecksInfo);
-					subModule.setFunctionalInfo(functionalInfo);
-					subModule.setTechnicalInfo(technicalInfo);
+				if(infoPresent) {
+					subModule.setInfos(preChecksInfo, functionalInfo, technicalInfo);
 				}
+				
+				subModule.setLastUpdated();
 			}
 		}
 		

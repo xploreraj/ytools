@@ -59,6 +59,7 @@ html, body {
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushSql.js"></script>
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushJScript.js"></script>
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushXml.js"></script>
+
 <link href="assets/syntaxhighlighter/styles/shCoreMidnight.css" rel="stylesheet" type="text/css" />
 <link href="assets/syntaxhighlighter/styles/shThemeMidnight.css" rel="stylesheet" type="text/css" />
 
