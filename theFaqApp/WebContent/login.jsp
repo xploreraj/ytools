@@ -24,7 +24,7 @@
 			<div class="form-row form-last-row">
 	        	<button type="submit">Login</button>
 	        </div>
-	        <span id="error" class="error-span">${requestScope.error}</span>
+	        <span id="error" class="error-span">${requestScope.errorMessage}</span>
 		</form>
 		
 	</div>

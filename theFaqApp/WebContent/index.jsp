@@ -15,7 +15,7 @@ table {
 }
 td {
 	vertical-align: top;
-	padding: 10px;
+	/* padding-left: 20px; */
 	/* margin-left: 20%; */
 	/* padding-left: 20%; */
 	/* text-align: center; raj */
@@ -24,13 +24,13 @@ td {
 	vertical-align: top;
 }
 .infoPanelTD {
-	/* float: right; */
+	
 }
 .frame {
 
 }
 html, body {
-    font-family: Verdana, sans-serif;
+    font-family: cursive /* Verdana, sans-serif */;
     font-size: 15px;
     line-height: 1.5;
     background-color: #f3f3f3;
@@ -42,6 +42,7 @@ html, body {
 	/* background: rgba(215,215,215,0.4); */
 	border: none;
 	width: 100%;
+	height : 100%;
 	overflow: auto;
 }
 .footer {
@@ -52,6 +53,30 @@ html, body {
 	height: 10px;
 	clear: both;
 }
+
+/*dropdown styling*/
+.select-style {
+    border: 1px solid #ccc;
+    width: 150px;
+    border-radius: 3px;
+    overflow: auto;
+    font-family: cursive;
+    background: #fafafa/*  url("img/icon-select.png") no-repeat 90% 50% */;
+}
+
+.select-style select {
+    padding: 5px 8px;
+    /* width: 130%; */
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+}
 </style>
 
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shCore.js"></script>
@@ -59,6 +84,7 @@ html, body {
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushSql.js"></script>
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushJScript.js"></script>
 <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushXml.js"></script>
+
 <link href="assets/syntaxhighlighter/styles/shCoreMidnight.css" rel="stylesheet" type="text/css" />
 <link href="assets/syntaxhighlighter/styles/shThemeMidnight.css" rel="stylesheet" type="text/css" />
 
@@ -70,14 +96,16 @@ html, body {
 <table>
 	<tr>
 		<td class="menuTD" width="20px">
-			<select name="module" id="module" style="width: 150px"
+		
+			<select name="module" id="module" class="select-style"
 				title="Select the parent module">
 					<option label="Select module">Select</option>
 			</select>
-			<select name="subModule" id="subModule"
-				style="width: 150px; display: none" title="Select the sub module">
+			<select name="subModule" id="subModule" class="select-style"
+				style="display: none" title="Select the sub module">
 					<option label="Select submodule">Select</option>
 			</select>
+			
 		</td>
 		<td class="infoPanelTD" width="80%">
 			<div class="infoPanel"><jsp:include page="info.jsp"></jsp:include></div>

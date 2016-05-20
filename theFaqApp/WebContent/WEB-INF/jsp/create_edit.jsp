@@ -15,6 +15,10 @@ table {
 td {
 	vertical-align: top;
 }
+.errorMessage {
+	width: 100px;
+	/* overflow: auto; */
+}
 </style>
 
 <script type="text/javascript">
@@ -22,7 +26,7 @@ td {
 	function showFormattingTips() {
 		window.open("formatting-tips.html", 
 				"_blank", 
-				"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=570,height=410");
+				"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=570,height=430");
 	}
 
 	function showInfoTextAreas(preChecks, funcInfo, techInfo) {
@@ -53,7 +57,7 @@ td {
 		$('#techInfoLegend').hide();
 	}
 
-	function showConfirmCheckbox(show) {
+	function showConfirmSubmitCheckbox(show) {
 		if(show) {
 			$('#confirmSubmitTD').show();
 			$('#confirmSubmit').prop('checked', false);
@@ -61,45 +65,59 @@ td {
 		else {
 			$('#confirmSubmitTD').hide();
 			$('#confirmSubmit').prop('checked', false);
+			showSubmit(false);
 		}
 	}
 
-	function validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoConcatenated) {
-		if(!newModuleName || (!newSubModuleName ? infoConcatenated : !infoConcatenated)) {
-			//$('#submitMessageSpan').css('color','red').html('Inconsistent data, complete all the fields!');
-			return false;
-		}
-		if(currModuleName.toLowerCase() == newModuleName.toLowerCase())
-			if(!currSubModuleName && currSubModuleName.toLowerCase() == newSubModuleName.toLowerCase())
-				return false;
-		
-		return true;
+	function showSubmit(flag) {
+		if (flag == true)
+			$('#submit').show();
+		else
+			$('#submit').hide();
+	}
+
+	function validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoPresent) {
+		//blank currModuleName and currSubModuleName correspond to Create requests
+		//since for select option we dont show text fields, and for selected options, 
+		//we have these fields filled.
+		if(!currModuleName)
+			return newModuleName && newSubModuleName && infoPresent;
+
+		else if (!currSubModuleName)
+				return newModuleName && currModuleName != newModuleName;
+		else
+			return newModuleName && newSubModuleName && infoPresent;
 	}
 
 	//pass a message to raise error, or pass nothing to remove existing errors
 	function errorHelper(isError, message) {
 		if(isError == undefined && message == undefined) {
 			//clear span
-			$('#errorMessageSpan').html('');
+			$('.errorMessage').html('');
 		}
 		else if(isError != undefined && message != undefined) {
 			//populate error span
-			$('#errorMessageSpan').html(message);
+			$('.errorMessage').html(message);
 			if(isError)
-				$('#errorMessageSpan').css('color','red');
+				$('.errorMessage').css('color','red');
 			else
-				$('#errorMessageSpan').css('color','blue');
+				$('.errorMessage').css('color','green');
 		}
 	}
-/*
- * This file has the AJAX calls and JQUERY page manipulation work functions for JSPs 
- */
 
  	$(document).change(function(){
 		errorHelper();
  	});
  	
 	$(document).ready(function(){
+
+		//showing formatting-tips.html in popup for each session
+		if(typeof(Storage) !== "undefined") {
+			if (sessionStorage.getItem('showFormattingTips') == null) {
+				sessionStorage.setItem('showFormattingTips', 1);
+				showFormattingTips();
+			}
+		}
 		
 		//1. Populate parent modules into dropdown
 		$.ajax({
@@ -121,38 +139,36 @@ td {
 		$('#module').change(function(){
 
 			//on change, clear dropdown population and info
-			//$('#subModule').find('option:gt(0)').remove();
 			$('#subModule').find('option:gt(0):lt(-1)').remove();
 			$('#newSubModuleName').val('').hide();
+			//hidden data fields storing existing info
+			$('#currentModuleName').val('');
+			$('#currentSubModuleName').val('');
 			hideInfoTextAreas();
+			showSubmit(false);
 
 			var moduleName = $('select#module').val();
 					
 			if(moduleName == 'Select') {
 				$('#newModuleName').val('').hide();
-				$('#subModule').hide();
-				
-				showConfirmCheckbox(false);
+				showConfirmSubmitCheckbox(false);
 				return;
 			}
 			else if(moduleName == 'Create') {
 
 				$('#newModuleName').val('').show();
 				$('#newSubModuleName').show();
-				$('#currentModuleName').val('');
 				$('#subModule').hide();
-				$('#currentSubModuleName').val('');
 				
 				showInfoTextAreas();
-				showConfirmCheckbox(true);
-				//$('#submit').show();
+				showConfirmSubmitCheckbox(true);
 				
 				return;
 			}
 
 			$('#currentModuleName').val(moduleName); //to store current module name or 'Create' for new module
 			$('#newModuleName').val(moduleName).show();
-			showConfirmCheckbox(true);
+			showConfirmSubmitCheckbox(true);
 			
 			$.ajax({
 				type:'POST',
@@ -179,6 +195,12 @@ td {
 
 			var moduleName = $('select#module').val();
 			var subModuleName = $('select#subModule').val();
+
+			$('#currentSubModuleName').val('');
+			$('#lastUpdated').val('');
+			
+			showConfirmSubmitCheckbox(true);	//module 
+			showSubmit(false);
 			
 			if(subModuleName == 'Select') {
 				$('#newSubModuleName').hide();
@@ -188,13 +210,14 @@ td {
 			if(subModuleName == 'Create' && moduleName != 'Select') {
 				$('#newSubModuleName').val('').show();
 				showInfoTextAreas();
-				showConfirmCheckbox(true);
 				return;
 			}
 
-			$('#currentSubModuleName').val(subModuleName); //to store current module name or 'Create' for new module
+			$('#currentSubModuleName').val(subModuleName); //to store current module name
 			$('#newSubModuleName').val(subModuleName);
 			$('#newSubModuleName').show();
+
+			showInfoTextAreas();
 			
 			$.ajax({
 				type:'POST',
@@ -208,9 +231,11 @@ td {
 				success: function(response){
 					if (response != null) {
 						showInfoTextAreas(response.preChecksInfo, response.functionalInfo, response.technicalInfo);
+						$('#lastUpdated').val(response.lastUpdated);
 					}
 					else {
-						errorHelper(true, 'No Data Found');
+						hideInfoTextAreas();
+						errorHelper(true, 'No data found. Looks like the information you looked out has changed recently. <a onclick="window.location.reload(true)">Click to refresh page.</a>');
 					}
 				}
 			});//3.
@@ -225,18 +250,23 @@ td {
 		});
 
 		$('#submit').click(function(){
+
+			if (!$('#confirmSubmit').is(':checked'))
+				return false;
+			
 			var currModuleName = $('#currentModuleName').val();
 			var newModuleName = $('#newModuleName').val().trim();
 			var currSubModuleName = $('#currentSubModuleName').val();
 			var newSubModuleName = $('#newSubModuleName').val().trim();
+			var lastUpdated = $('#lastUpdated').val().trim();
 			var preChecksInfo = $('#preChecksInfo').val().trim();
 			var functionalInfo = $('#functionalInfo').val().trim();
-			var technicalInfo = $('#technicalInfo').val().trim();;
-			var infoConcatenated =  preChecksInfo + functionalInfo + technicalInfo;
+			var technicalInfo = $('#technicalInfo').val().trim();
+			var infoPresent =  preChecksInfo || functionalInfo || technicalInfo;
 
 			//TODO
 			//submit validations **************
-			if(!validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoConcatenated)) {
+			if(!validateForm(currModuleName, newModuleName, currSubModuleName, newSubModuleName, infoPresent)) {
 				errorHelper(true, 'Inconsistent data! New value(s) must be different from previous value(s), and not empty.');
 				return;
 			}
@@ -253,6 +283,7 @@ td {
 					newModuleName : newModuleName,
 					currSubModuleName : currSubModuleName,
 					newSubModuleName : newSubModuleName,
+					lastUpdated : lastUpdated,
 					preChecksInfo : preChecksInfo,
 					functionalInfo : functionalInfo,
 					technicalInfo : technicalInfo,
@@ -261,12 +292,12 @@ td {
 				dataType: 'text',
 				url:'AjaxController',
 				success: function(response){
-					//errorHelper(false, response + ' <a onclick="window.location.reload(true)">Refresh page.</a>');
-					alert('Data sucessfully saved!');
+					alert(response);
 					window.location.reload(true);
+					//errorHelper(false, response + ' <b><a onclick="window.location.reload(true)">Click to refresh page.</a></b>');	
 				},
 				error: function(jqXHR, textStatus, message) {
-					errorHelper(true, message);
+					errorHelper(true, jqXHR.responseText);
 				},
 				complete: function(){
 					//window.location.reload(true);
@@ -279,8 +310,10 @@ td {
 </head>
 <body>
 	<center><h1>Admin Console</h1></center>
-	<div align="right" style="font-size: 15"><a onclick="showFormattingTips()">Formatting Tips</a> | 
-	<a href="logout">Logout</a></div>
+	<div align="right" style="font-size: 15;">
+		<b><a onclick="showFormattingTips()">How to format?</a></b> | 
+		<a href="logout">Logout</a>
+	</div>
 	<hr>
 	<table align="center">
 		<tr>
@@ -304,6 +337,7 @@ td {
 			</td>
 			<td>
 				<input type="hidden" id="currentSubModuleName" value="">
+				<input type="hidden" id="lastUpdated">
 				<input type="text" style="display: none;" id="newSubModuleName" style="width: 150px" title="Enter Submodule Name" placeholder="Enter sub-module name">
 			</td>
 		</tr>
@@ -337,7 +371,7 @@ td {
 		</tr>
 		<tr>
 			<td></td>
-			<td><span id="errorMessageSpan"></span></td>
+			<td><span class="errorMessage"></span></td>
 		</tr>
 	</table>
 	

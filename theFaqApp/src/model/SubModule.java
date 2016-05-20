@@ -1,6 +1,9 @@
 package model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.boon.json.annotations.JsonIgnore;
 import org.boon.json.annotations.JsonInclude;
 
@@ -14,6 +17,7 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	private @JsonInclude String functionalInfo;
 	private @JsonInclude String technicalInfo;
 	private @JsonInclude String preChecksInfo;
+	private @JsonInclude long lastUpdated;
 	private @JsonIgnore boolean writeLock;
 	
 	public String getName() {
@@ -39,6 +43,28 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	}
 	public void setPreChecksInfo(String preChecksInfo) {
 		this.preChecksInfo = preChecksInfo;
+	}
+	
+	/**
+	 * Helper method to set information strings for this SubModule
+	 * @param preChecks
+	 * @param funcInfo
+	 * @param techInfo
+	 */
+	public void setInfos(String preChecks, String funcInfo, String techInfo) {
+		
+		setPreChecksInfo(preChecks);
+		setFunctionalInfo(funcInfo);
+		setTechnicalInfo(techInfo);
+		
+	}
+	
+	public long getLastUpdated() {
+		return lastUpdated;
+	}
+	
+	public void setLastUpdated(){
+		lastUpdated = new Date().getTime();
 	}
 	
 	public void parseJson2HtmlSubModuleInfos() {

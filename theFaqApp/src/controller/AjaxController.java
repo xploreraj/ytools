@@ -44,19 +44,19 @@ public class AjaxController extends HttpServlet {
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		
-		ModulesData modulesData = DataService.getModulesData();
+		ModulesData modulesData = DataService.INSTANCE_.getModulesData();
 		
 		String action = request.getParameter("action");
 		
 		if("getModuleNames".equals(action)) {
 			String json;
 			if (modulesData == null) json = "";
-			else json = DataService.getModuleNamesAsJson(modulesData);
+			else json = DataService.setToJsonString(modulesData.getModuleNames());
             out.write(json);  
 		}
 		else if("getSubModuleNames".equals(action)) {
 			String moduleName = request.getParameter("moduleName");
-			String json = DataService.getSubModuleNames(modulesData, moduleName);
+			String json = DataService.setToJsonString(modulesData.getModule(moduleName).getSubModuleNames());
             out.write(json);
 		}
 		else if("getSubModule".equals(action)) {
@@ -77,19 +77,28 @@ public class AjaxController extends HttpServlet {
 			String preChecksInfo = request.getParameter("preChecksInfo");
 			String functionalInfo = request.getParameter("functionalInfo");
 			String technicalInfo = request.getParameter("technicalInfo");
+			String lastUpdatedParam = request.getParameter("lastUpdated"); //will be null when SubModule info is not requested in clientside
+			
+			long lastUpdated = lastUpdatedParam==null||lastUpdatedParam.isEmpty() ? 0 : Long.parseLong(lastUpdatedParam.trim());
 			
 			try {
-				DataService.saveModuleData(currModuleName, newModuleName, 
-						currSubModuleName, newSubModuleName, 
+				DataService.INSTANCE_.saveModuleData(currModuleName, newModuleName, 
+						currSubModuleName, newSubModuleName, lastUpdated,
 						preChecksInfo, functionalInfo, technicalInfo);
-				response.setStatus(201);
+				
+				response.setStatus(200);
 				out.print("Data successfully saved.");
+				out.flush();
+				out.close();
 			} catch (InconsistentDataException e) {
-				e.printStackTrace();
-				response.sendError(400, e.getMessage());
+				response.setStatus(400);
+				out.print("Inconsistent Data: " + e.getMessage());
+				out.flush();
 			} catch (Exception e) {
 				e.printStackTrace();
-				response.sendError(500, "Some internal error occurred.");
+				response.setStatus(500);
+				out.print("SERIOUS: Please report this to admin:<br>" + e.getClass().getSimpleName() + ": " + e.getMessage());
+				out.flush();
 			}
 		}
 	}

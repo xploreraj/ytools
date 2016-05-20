@@ -4,13 +4,6 @@
 <html lang="en">
 <head>
 <script src="assets/js/jquery-2.1.3.min.js"></script>
-<!-- <script type="text/javascript" src="assets/syntaxhighlighter/scripts/shCore.js"></script>
-<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushJava.js"></script>
-<script type="text/javascript" src="assets/syntaxhighlighter/scripts/shBrushSql.js"></script>
-
-<link href="assets/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
-<link href="assets/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript">SyntaxHighlighter.all();</script> -->
 <script type="text/javascript">
 
 
@@ -52,7 +45,7 @@
 	/*background-color: white; /* #CFE880 */
 	background: rgba(255,255,255,0.7);
 	text-align: left;
-	margin-left: 0px;
+	padding: 20px;
 }
 
 #secondary .widget.active .widget-title,#secondary .widget.active ul {
@@ -60,11 +53,11 @@
 	color: #fff;
 }
 
-html, body {
-    font-family: Verdana, sans-serif;
+/* html, body {
+    font-family: /* Verdana, sans-serif, */ cursive;
     font-size: 15px;
     line-height: 1.5;
-}
+} */
 
 
 </style>

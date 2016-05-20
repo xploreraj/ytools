@@ -9,9 +9,11 @@ package service;
 public class InconsistentDataException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	
 	public InconsistentDataException(String msg) {
 		super(msg);
-	}
+		
+	}	
 
 }
