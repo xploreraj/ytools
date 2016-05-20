@@ -45,7 +45,7 @@
 	/*background-color: white; /* #CFE880 */
 	background: rgba(255,255,255,0.7);
 	text-align: left;
-	padding: 7px;
+	padding: 20px;
 }
 
 #secondary .widget.active .widget-title,#secondary .widget.active ul {
@@ -53,11 +53,11 @@
 	color: #fff;
 }
 
-html, body {
-    font-family: Verdana, sans-serif;
+/* html, body {
+    font-family: /* Verdana, sans-serif, */ cursive;
     font-size: 15px;
     line-height: 1.5;
-}
+} */
 
 
 </style>

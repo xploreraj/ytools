@@ -17,7 +17,7 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	private @JsonInclude String functionalInfo;
 	private @JsonInclude String technicalInfo;
 	private @JsonInclude String preChecksInfo;
-	private @JsonInclude String lastUpdated;
+	private @JsonInclude long lastUpdated;
 	private @JsonIgnore boolean writeLock;
 	
 	public String getName() {
@@ -53,25 +53,18 @@ public class SubModule implements Serializable, Comparable<SubModule> {
 	 */
 	public void setInfos(String preChecks, String funcInfo, String techInfo) {
 		
-		if (preChecks!=null && !preChecks.equals(getPreChecksInfo()))
-			setPreChecksInfo(preChecks);
-		
-		if (funcInfo!=null && !funcInfo.equals(getFunctionalInfo()))
-			setFunctionalInfo(funcInfo);
-		
-		if (techInfo!=null && !techInfo.equals(getTechnicalInfo()))
-			setTechnicalInfo(techInfo);
+		setPreChecksInfo(preChecks);
+		setFunctionalInfo(funcInfo);
+		setTechnicalInfo(techInfo);
 		
 	}
 	
-	public String getLastUpdated() {
+	public long getLastUpdated() {
 		return lastUpdated;
 	}
 	
 	public void setLastUpdated(){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		Date date = new Date();
-		lastUpdated = dateFormat.format(date);
+		lastUpdated = new Date().getTime();
 	}
 	
 	public void parseJson2HtmlSubModuleInfos() {

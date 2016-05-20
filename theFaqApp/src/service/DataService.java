@@ -3,6 +3,7 @@ package service;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Set;
 
 import model.Module;
@@ -16,43 +17,45 @@ import data.ModulesData;
 
 public class DataService {
 	
-	private static ObjectMapper mapper = JsonFactory.create();
+	private static final ObjectMapper mapper = JsonFactory.create();
 	private static final String FILE_NAME = "C:/Users/rbiswas/Documents/GitHub/ytools/theFaqApp/data/info_db.json";
+	public static final DataService INSTANCE_ = new DataService();
 	
-	public static ModulesData getModulesData() throws FileNotFoundException {
+	private DataService(){
+		
+	}
+	
+	/**
+	 * 
+	 * @return ModulesData object, either with mapped data from file or empty object if file is empty
+	 * @throws IOException
+	 */
+	public synchronized ModulesData getModulesData() throws IOException {
 
 		ModulesData modulesData;
+		FileInputStream fis = new FileInputStream(FILE_NAME);
 		try {
-			modulesData = mapper.readValue(new FileInputStream(FILE_NAME),  ModulesData.class);
+			modulesData = mapper.readValue(fis,  ModulesData.class);
 		}
+		//If file is empty, then Boon throws CCE while trying to map with ModulesData.class
 		catch(ClassCastException e) {
-			//If file is empty, then Boon throws CCE while trying to map with ModulesData.class
-			modulesData = null;
+			modulesData = new ModulesData();
+		}
+		finally {
+			if (fis!=null) fis.close();
 		}
 		return modulesData;
 	}
 	
 	/**
-	 * @param modulesData
-	 * @return Set of module names as JSON string
+	 * Takes a Set&lt;String> as input
+	 * @param stringSet
+	 * @return JSON String representation of input
 	 */
-	public static String getModuleNamesAsJson(ModulesData modulesData) {
-		Set<String> moduleNames = modulesData.getModuleNames();	
-		String json = mapper.toJson(moduleNames);
-		//mapper.writeValue(out, subModuleNames);
-		return json;
+	public static String setToJsonString(Set<String> stringSet) {
+		return mapper.toJson(stringSet);
 	}
 	
-	/**
-	 * @param modulesData
-	 * @param parentModule
-	 * @return Set of submodule names as JSON string
-	 */
-	public static String getSubModuleNames(ModulesData modulesData, String moduleName) {
-		Set<String> subModuleNames = modulesData.getModule(moduleName).getSubModuleNames();
-		String json = mapper.toJson(subModuleNames);
-		return json;
-	}
 	
 	/**
 	 * @param modulesData
@@ -73,100 +76,149 @@ public class DataService {
 	}
 	
 	/**
-	 * This will be used to add new modules or update existing modules, based upon parameters
-	 * 
-	 * @param modulesData ModulesData
-	 * @param currModuleName String
-	 * @param newModuleName String
-	 * @param currSubModuleName String
-	 * @param newSubModuleName String
-	 * @param info String
-	 * @throws FileNotFoundException
-	 * @throws InconsistentDataException 
+	 * This will be used to add new modules or update existing modules, based upon parameters.
+	 * Empty currModuleName and currSubModuleName signify creating of new data
 	 */
-	public static void saveModuleData(String currModuleName, String newModuleName, 
+	public synchronized void saveModuleData(String currModuleName, String newModuleName, 
 			String currSubModuleName, String newSubModuleName, 
-			String preChecksInfo, String functionalInfo, String technicalInfo) 
-					throws FileNotFoundException, InconsistentDataException {
+			long lastUpdated, String preChecksInfo, String functionalInfo, String technicalInfo) 
+					throws IOException, InconsistentDataException {
 
 		Module module;
 		SubModule subModule;
-		ModulesData modulesData = DataService.getModulesData();
-		
-		//check for inconsistent data
-		/*if(newModuleName.isEmpty() || 
-				!newSubModuleName.isEmpty() && info.isEmpty() ||
-				newSubModuleName.isEmpty() && !info.isEmpty())
-			throw new InconcsistentDataException("Module name is empty or Submodule name and Info are inconsistently passed");*/
-		if(newModuleName.isEmpty())
-				throw new InconsistentDataException("Module name can not be empty.");
-		
-		boolean infoPresent = preChecksInfo!=null || !preChecksInfo.isEmpty() ||
-				functionalInfo!=null || !functionalInfo.isEmpty() ||
-				technicalInfo!=null || !technicalInfo.isEmpty();
-		
-		if(!newSubModuleName.isEmpty() && !infoPresent ||
-				newSubModuleName.isEmpty() && infoPresent)
-				throw new InconsistentDataException("Submodule name and Info must not be empty.");
+		ModulesData modulesData = getModulesData();
 		
 		newModuleName 		= CommonUtil.getNameFormattedString(newModuleName);
 		newSubModuleName 	= CommonUtil.getNameFormattedString(newSubModuleName);
 		currModuleName 		= CommonUtil.getNameFormattedString(currModuleName);
 		currSubModuleName 	= CommonUtil.getNameFormattedString(currSubModuleName);
 		
-		if(modulesData == null || !newModuleName.isEmpty() && !newSubModuleName.isEmpty() && infoPresent
-				&& (currModuleName.isEmpty() || modulesData.getModule(currModuleName)==null)) {
-			//create
+		if (newModuleName.isEmpty())
+			throw new InconsistentDataException("Module name can not be empty.");
+		
+		//At least one info has to be present to save submodule information
+		boolean infoPresent = preChecksInfo!=null && !preChecksInfo.isEmpty() ||
+				functionalInfo!=null && !functionalInfo.isEmpty() ||
+				technicalInfo!=null && !technicalInfo.isEmpty();
+		
+
+		// 1. Create new module
+		if(currModuleName.isEmpty()
+				&& !newModuleName.isEmpty() 
+				&& !newSubModuleName.isEmpty() 
+				&& infoPresent) {
+
+			if (modulesData.getModule(newModuleName) != null)
+				throw new InconsistentDataException("Another module with same name already exists.");
+			
 			module = new Module();
-			if(modulesData == null)
-				modulesData = new ModulesData();
 			module.setName(newModuleName);
 			
 			subModule = new SubModule();
 			subModule.setName(newSubModuleName);
-			subModule.setInfos(preChecksInfo, functionalInfo, technicalInfo);
+			subModule.setPreChecksInfo(preChecksInfo);
+			subModule.setFunctionalInfo(functionalInfo);
+			subModule.setTechnicalInfo(technicalInfo);
 			subModule.setLastUpdated();
 			
 			module.addSubModule(subModule);
 			modulesData.addModule(module);
+			
+			saveDataToFile(modulesData);
+			return;
 		}
+		// 2. Update existing module
 		else {
 			module = modulesData.getModule(currModuleName);
-			//remove old name entry and insert new name entry
-			if(!newModuleName.isEmpty() && !currModuleName.equals(newModuleName)) {
-				modulesData.removeModule(currModuleName);
-				module.setName(newModuleName);
-				modulesData.addModule(module);
-			}
 			
-			//see if need to create submodule, currSubModuleName field is empty in page for create
-			if(!newSubModuleName.isEmpty() && infoPresent
-					&& (currSubModuleName.isEmpty() || module.getSubModule(currSubModuleName)==null)) {
+			// 2.1. Rename existing module only?
+			if (currSubModuleName.isEmpty()
+					&& newSubModuleName.isEmpty()
+					&& !infoPresent) {
+				
+				if (modulesData.getModuleNames().contains(newModuleName))
+					throw new InconsistentDataException("Another module with same name already exists.");
+				
+				module.setName(newModuleName);
+				modulesData.removeModule(currModuleName);
+				modulesData.addModule(module);
+				
+				saveDataToFile(modulesData);
+				return;
+				
+			}
+			// 2.2. Create new SubModule
+			else if (currSubModuleName.isEmpty()
+					&& !module.getSubModuleNames().contains(currSubModuleName)
+					&& !newSubModuleName.isEmpty()
+					&& infoPresent){
+				
 				subModule = new SubModule();
 				subModule.setName(newSubModuleName);
-				subModule.setInfos(preChecksInfo, functionalInfo, technicalInfo);
+				subModule.setPreChecksInfo(preChecksInfo);
+				subModule.setFunctionalInfo(functionalInfo);
+				subModule.setTechnicalInfo(technicalInfo);
 				subModule.setLastUpdated();
+				
 				module.addSubModule(subModule);
+				
+				saveDataToFile(modulesData);
+				return;
+				
 			}
-			else {
-				//edit submodule
+			// 2.3. Update existing submodule
+			else if (!currSubModuleName.isEmpty()
+					&& !newSubModuleName.isEmpty()
+					&& infoPresent) {
+				
+				// 2.3.1 Has newSubModuleName changed and matches with an existing SubModule name?
+				if (!currSubModuleName.equalsIgnoreCase(newSubModuleName)
+						&& module.getSubModuleNames().contains(newSubModuleName))
+					throw new InconsistentDataException("Another submodule with same name already exists");
+				
 				subModule = module.getSubModule(currSubModuleName);
-				//remove old name entry and insert new name entry?
-				if (!currSubModuleName.equals(newSubModuleName)) {
-					module.removeSubModule(currSubModuleName);
-					subModule.setName(newSubModuleName);
-					module.addSubModule(subModule);
-				}
 				
-				if(infoPresent) {
-					subModule.setInfos(preChecksInfo, functionalInfo, technicalInfo);
-				}
+				// 2.3.2 Has Submodule information changed in file since last read by client?
+				// Either Submodule name is changed or info updated
+				if(subModule == null || Long.compare(lastUpdated, subModule.getLastUpdated()) == -1)
+					throw new InconsistentDataException("The Submodule has been updated since last read by client."
+							+ " Please store your changes locally, refresh the page and merge them to update.");
 				
+				subModule.setName(newSubModuleName);
+				subModule.setPreChecksInfo(preChecksInfo);
+				subModule.setFunctionalInfo(functionalInfo);
+				subModule.setTechnicalInfo(technicalInfo);
 				subModule.setLastUpdated();
+				
+				module.removeSubModule(currSubModuleName);
+				module.addSubModule(subModule);
+				
+				saveDataToFile(modulesData);
+				return;
+				
 			}
 		}
 		
-		mapper.writeValue(new FileOutputStream(FILE_NAME), modulesData);
+		// 3. Any save condition mismatch from above will result in exception
+		throw new InconsistentDataException("Module name can not be empty or match existing module."
+				+ " If submodule data is passed, then submodule name should not be empty and"
+				+ " at least one information field should have data.");
+		
 	}
+	
+	/**
+	 * Save ModulesData object to Json file.
+	 * @throws IOException if file not found or stream close failed.
+	 */
+	public synchronized void saveDataToFile(ModulesData modulesData) throws IOException {
+		FileOutputStream fos = new FileOutputStream(FILE_NAME);
+		try {
+			mapper.writeValue(fos,  modulesData);
+		}
+		finally {
+			if (fos!=null) fos.close();
+		}
+	}
+
 
 }
