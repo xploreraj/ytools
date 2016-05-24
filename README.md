@@ -3,7 +3,7 @@ theFAQApp is meant to a be a fairly simple FAQ tool, which allows admins to crea
 Everything is stored in a JSON file. The mapping has been done using BOON project.
 The information uses Alex Gorbatchev's syntax highligter to highlight code snippets.
 
-Here is the sample Json file containing data:
+Here is the basic interpretation of Json file containing data:
 
 
     {
@@ -25,4 +25,6 @@ Here is the sample Json file containing data:
     }
 
 
-You can see actual fields in model.ModulesData, model.Module and model.SubModule.
+You can see actual fields in `model.ModulesData`, `model.Module` and `model.SubModule`.
+To see actual sample data, look at data/info_db.json.
+And to generate or test data, use `test.App`
