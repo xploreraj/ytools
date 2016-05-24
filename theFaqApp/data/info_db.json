@@ -1,1 +1,43 @@
-{"modulesMap":{"Transactions":{"name":"Transactions","subModulesMap":{"Reconcile":{"name":"Reconcile","functionalInfo":"functional information","technicalInfo":"some technical information","preChecksInfo":"Hi...."},"Split":{"name":"Split","functionalInfo":"functional information","technicalInfo":"some technical information","preChecksInfo":"Hello world"}},"subModuleNames":["Reconcile","Split"]},"Networth":{"name":"Networth","subModulesMap":{"Datapoints":{"name":"Datapoints","functionalInfo":"- Daily datapoint refers to daily balance, based upon scraped information.\n- Weekly datapoint refers to the last updated daily data point in that week.\n- Monthly datapoint refers to the last updated daily data point in that month.","technicalInfo":"Whenever something related to the networth is needed, everything is calculated from networth data points tables. There are 3 tables:\n-\tdaily_account_data_point\n-\tweekly_account_data_point\n-\tmonthly_account_data_point\nThese tables are populated by DB filer whenever it gets data for user accounts, this can be through refreshing mechanism (scraping) or through client data feed.\nAs per user query request (i.e. the filters in the finapps like networth performance, assets allocation etc)  corresponding packages are called to retrieve data.\nThe data point tables have data points in them only for those days when they were created. If an account is refreshed on 1st jan and then on 4th Jan, only these days\u2019 data points are created, 2nd and 3rd Jan data points is not created.\nBut to render the information to user which is in the form of trend (chart or table), we can not miss these in-between missing DPs. So the DP packages that execute and return the user networth information also have logic for extrapolation.\nImportant packages are:\n-\tpkg_daily_data_point\n-\tpkg_weekly_data_point\n-\tpkg_monthly_data_point\nWhen any networth query is made from networth module to SQLMapTemplateDAO for execution, then the sql id is matched and query is taken from NetworthDataPointSource.xml, and sent to ORM level for execution.\n\n<b>A sample sql_id definition for daily DP is:</b>\n[code=sql]<select id=\"getUserAllDailyNetworthDPs\" parameterMap=\"networthAllParam\" resultMap=\"networthResult\">\n    SELECT (t.normalised_refresh_time+3600)*1000 AS NORM_REFRESH_TIME_IN_MILLIS,\n            curr.currency_desc AS CURRENCY_DESC,        \n            sum(decode(t.IS_ASSET,1,t.balance,0)) AS ASSET,\n            sum(decode(t.IS_ASSET,0,t.balance,0)) AS LIABILITY,\n            sum(decode(t.IS_ASSET,1,t.balance,0)) \n                - sum(decode(t.IS_ASSET,0,t.balance,0)) AS NETWORTH\n    FROM ( SELECT * FROM TABLE(pkg_daily_data_point.getExtrapolatedUserDailyDPs(?,?,?,?,?))\n          UNION ALL\n          SELECT * FROM TABLE(pkg_daily_data_point.getExtrapltdUserSharedDailyDPs(?,?,?,?,?))\n         )t, currency curr\n    WHERE t.balance_curr_id = curr.currency_id\n    GROUP BY curr.currency_desc,t.normalised_refresh_time\n    ORDER BY curr.currency_desc,t.normalised_refresh_time\n</select>[/code]\n- The source code for these packages can be found in Perforce repository\n//dist/maindb/dbschema/src/core/oracle","preChecksInfo":"1. Which balance is the user concerned about- daily/weekly/monthly?\n2. The change is calculated based upon:\n- daily if time is a week\n- weekly if time is in weeks or 1 month\n- monthly if time is in months or years"},"Nw Change":{"name":"Nw Change","functionalInfo":"some functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info\nsome functional info","technicalInfo":"some technical info[code=sql]if(response.functionalInfo)\n    functionalInfo.html(response.functionalInfo.replace(/\\n/g,\"<br>\"));\nelse\n    functionalInfo.html('NA');\nif(response.technicalInfo)\n    technicalInfo.html(response.technicalInfo.replace(/\\n/g,\"<br>\"));\nelse\n    technicalInfo.html('NA');\n[/code]<ol><li>above code was specially put inside 'code' tags.</li>\n<li>normal html tags also can be used like li, ol, b, however anything else should be restrained, and this app is not trained to take care of the resultant rendering.</li>\n</ol>\n[code=js]function add(int a, int b)\n{\n    return a+b;\n}\n[/code]\nAbove is sample JS code snippet.","preChecksInfo":"prechecks\nstep 1\nstep 2\nstep 3\nsddddddddddddddddd"}},"subModuleNames":["Datapoints","Nw Change"]}},"moduleNames":["Networth","Transactions"]}
+"modulesMap": {
+    "module1": {
+      "name": "module1",
+      "subModulesMap": {
+        "submodule11": {
+          "name": "submodule1",
+          "functionalInfo": "functional information",
+          "technicalInfo": "some technical information",
+          "preChecksInfo": "Hi...."
+        },
+        "submodule2": {
+          "name": "submoudle12",
+          "functionalInfo": "some info",
+          "technicalInfo": "some info",
+          "preChecksInfo": "some info",
+          "lastUpdated": 1463640131077
+        }
+      },
+      "subModuleNames": [
+        "submodule1",
+        "submodule2"
+      ]
+    },
+    "module2": {
+      "name": "module2",
+      "subModulesMap": {
+        "submodule21": {
+          "name": "submodule21",
+          "functionalInfo": "",
+          "technicalInfo": "[code=sql]select * from dual; --test code[\/code]",
+          "preChecksInfo": "some precheck info",
+          "lastUpdated": 1463600282608
+        }
+      },
+      "subModuleNames": [
+        "submodule21"
+      ]
+    },
+  "moduleNames": [
+    "module1",
+    "module2"
+  ]
+}
